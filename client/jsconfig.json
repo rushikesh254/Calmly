@@ -1,7 +1,20 @@
 {
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./*"]
-    }
-  }
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./*"],
+			"@/components/*": ["./components/*"],
+			"@/lib/*": ["./lib/*"],
+			"@/app/*": ["./app/*"]
+		},
+		"jsx": "react-jsx",
+		"target": "ES2020",
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true
+	},
+	"include": ["**/*.js", "**/*.jsx", "**/*.mjs"],
+	"exclude": ["node_modules", ".next", "out"]
 }

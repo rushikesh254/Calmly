@@ -1,14 +1,20 @@
-import { fileURLToPath } from "url";
-import path from "path";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-/** @type {import('next').NextConfig} */
+/**
+ * Next.js Configuration for Calmly Mental Health Platform
+ * @author Rushikesh Bodke
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
-	// Silence monorepo root inference warnings when building from parent
-	turbopack: {
-		root: __dirname,
+	// Enable experimental features for better performance
+	experimental: {
+		optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
+	},
+	// Configure images and static assets
+	images: {
+		domains: ["res.cloudinary.com"],
+	},
+	// Environment variables
+	env: {
+		CUSTOM_KEY: process.env.CUSTOM_KEY,
 	},
 };
 
