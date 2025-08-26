@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 
 export default function Home() {
-	const features = [
+	const featureList = [
 		{
 			icon: <Heart className="w-8 h-8" />,
 			title: "Professional Therapy",
@@ -66,7 +66,7 @@ export default function Home() {
 		},
 	];
 
-	const testimonials = [
+	const testimonialList = [
 		{
 			name: "Sarah Johnson",
 			role: "Student",
@@ -90,7 +90,7 @@ export default function Home() {
 		},
 	];
 
-	const containerVariants = {
+	const staggerContainer = {
 		hidden: { opacity: 0 },
 		visible: {
 			opacity: 1,
@@ -101,7 +101,7 @@ export default function Home() {
 		},
 	};
 
-	const cardVariants = {
+	const cardMotion = {
 		hidden: { opacity: 0, y: 30 },
 		visible: {
 			opacity: 1,
@@ -262,15 +262,15 @@ export default function Home() {
 						</p>
 					</motion.div>
 					<motion.div
-						variants={containerVariants}
+						variants={staggerContainer}
 						initial="hidden"
 						whileInView="visible"
 						viewport={{ once: true }}
 						className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-						{features.map((feature, index) => (
+						{featureList.map((feature, idx) => (
 							<motion.div
-								key={index}
-								variants={cardVariants}
+								key={idx}
+								variants={cardMotion}
 								whileHover="hover"
 								className="group">
 								<Card className="p-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-0 shadow-xl card-hover h-full">
@@ -314,15 +314,15 @@ export default function Home() {
 						</p>
 					</motion.div>
 					<motion.div
-						variants={containerVariants}
+						variants={staggerContainer}
 						initial="hidden"
 						whileInView="visible"
 						viewport={{ once: true }}
 						className="grid grid-cols-1 md:grid-cols-3 gap-8">
-						{testimonials.map((testimonial, index) => (
+						{testimonialList.map((testimonial, idx) => (
 							<motion.div
-								key={index}
-								variants={cardVariants}
+								key={idx}
+								variants={cardMotion}
 								whileHover="hover"
 								className="group">
 								<Card className="p-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-0 shadow-xl card-hover h-full">
