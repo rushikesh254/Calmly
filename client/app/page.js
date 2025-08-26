@@ -20,8 +20,8 @@ import {
 	Sparkles,
 } from "lucide-react";
 
-export default function Home() {
-	const featureList = [
+export default function HomePage() {
+	const features = [
 		{
 			icon: <Heart className="w-8 h-8" />,
 			title: "Professional Therapy",
@@ -66,7 +66,7 @@ export default function Home() {
 		},
 	];
 
-	const testimonialList = [
+	const testimonials = [
 		{
 			name: "Sarah Johnson",
 			role: "Student",
@@ -90,7 +90,7 @@ export default function Home() {
 		},
 	];
 
-	const staggerContainer = {
+	const staggeredContainer = {
 		hidden: { opacity: 0 },
 		visible: {
 			opacity: 1,
@@ -101,7 +101,7 @@ export default function Home() {
 		},
 	};
 
-	const cardMotion = {
+	const cardVariants = {
 		hidden: { opacity: 0, y: 30 },
 		visible: {
 			opacity: 1,
@@ -262,27 +262,27 @@ export default function Home() {
 						</p>
 					</motion.div>
 					<motion.div
-						variants={staggerContainer}
+						variants={staggeredContainer}
 						initial="hidden"
 						whileInView="visible"
 						viewport={{ once: true }}
 						className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-						{featureList.map((feature, idx) => (
+						{features.map((featureItem, index) => (
 							<motion.div
-								key={idx}
-								variants={cardMotion}
+								key={index}
+								variants={cardVariants}
 								whileHover="hover"
 								className="group">
 								<Card className="p-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-0 shadow-xl card-hover h-full">
 									<motion.div
-										className={`${feature.color} mb-6 group-hover:scale-110 transition-transform duration-300`}>
-										{feature.icon}
+										className={`${featureItem.color} mb-6 group-hover:scale-110 transition-transform duration-300`}>
+										{featureItem.icon}
 									</motion.div>
 									<h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
-										{feature.title}
+										{featureItem.title}
 									</h3>
 									<p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg">
-										{feature.description}
+										{featureItem.description}
 									</p>
 								</Card>
 							</motion.div>
@@ -314,20 +314,20 @@ export default function Home() {
 						</p>
 					</motion.div>
 					<motion.div
-						variants={staggerContainer}
+						variants={staggeredContainer}
 						initial="hidden"
 						whileInView="visible"
 						viewport={{ once: true }}
 						className="grid grid-cols-1 md:grid-cols-3 gap-8">
-						{testimonialList.map((testimonial, idx) => (
+						{testimonials.map((testimonialItem, index) => (
 							<motion.div
-								key={idx}
-								variants={cardMotion}
+								key={index}
+								variants={cardVariants}
 								whileHover="hover"
 								className="group">
 								<Card className="p-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-0 shadow-xl card-hover h-full">
 									<div className="flex items-center mb-6">
-										{[...Array(testimonial.rating)].map((_, i) => (
+										{[...Array(testimonialItem.rating)].map((_, i) => (
 											<Star
 												key={i}
 												className="w-5 h-5 text-yellow-400 fill-current"
@@ -335,14 +335,14 @@ export default function Home() {
 										))}
 									</div>
 									<p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg mb-6">
-										&ldquo;{testimonial.content}&rdquo;
+										&ldquo;{testimonialItem.content}&rdquo;
 									</p>
 									<div>
 										<p className="font-semibold text-slate-900 dark:text-white">
-											{testimonial.name}
+											{testimonialItem.name}
 										</p>
 										<p className="text-slate-500 dark:text-slate-400">
-											{testimonial.role}
+											{testimonialItem.role}
 										</p>
 									</div>
 								</Card>
