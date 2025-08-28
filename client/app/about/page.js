@@ -1,14 +1,15 @@
 /**
- * Modern About Page for Calmly Mental Health Platform
- * @author Rushikesh Bodke
+ * About Page for Calmly Mental Health Platform
+ * Presents mission, team, values, and contact CTA.
+ * Author: Rushikesh Bodke
  */
+import Link from "next/link";
+import { Heart, Users, Target, Award, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Heart, Users, Target, Award, ArrowRight } from "lucide-react";
-import Link from "next/link";
 
-export default function AboutPage() {
+export default function About() {
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
 			{/* Header */}
