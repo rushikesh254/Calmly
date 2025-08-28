@@ -1,21 +1,22 @@
 /**
- * Modern Contact Page for Calmly Mental Health Platform
- * @author Rushikesh Bodke
+ * Contact Page — Calmly Mental Health Platform
+ * Provides contact options and urgent support details.
+ * Author: Rushikesh Bodke
  */
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
+	ArrowRight,
+	Clock,
 	Heart,
 	Mail,
-	Phone,
-	Clock,
 	MessageCircle,
-	ArrowRight,
+	Phone,
 } from "lucide-react";
-import Link from "next/link";
 
-export default function ContactPage() {
+export default function Contact() {
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
 			{/* Header */}
@@ -54,7 +55,7 @@ export default function ContactPage() {
 				</nav>
 			</header>
 
-			{/* Main Content */}
+			{/* Main */}
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<div className="text-center mb-16">
 					<div className="w-20 h-20 bg-gradient-to-r from-indigo-600 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -72,7 +73,7 @@ export default function ContactPage() {
 					</p>
 				</div>
 
-				{/* Contact Cards */}
+				{/* Contact Methods */}
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
 					<Card className="p-6 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border border-indigo-200/60 dark:border-indigo-700/60 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
 						<div className="text-center space-y-4">
@@ -130,7 +131,7 @@ export default function ContactPage() {
 					</Card>
 				</div>
 
-				{/* Additional Information */}
+				{/* Help CTA */}
 				<div className="text-center space-y-6">
 					<Card className="p-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200/60 dark:border-slate-700/60">
 						<h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
