@@ -10,44 +10,44 @@ import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Menu, X } from "lucide-react";
 
-export default function MHPSignup() {
+export default function MHPSignUpPage() {
 	const router = useRouter();
-	const [formData, setFormData] = useState({
+	const [formValues, setFormValues] = useState({
 		username: "",
 		licenseNumber: "",
 		email: "",
 		password: "",
 	});
-	const [error, setError] = useState("");
+	const [errorMessage, setErrorMessage] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [isSuccess, setIsSuccess] = useState(false);
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [modalMessage, setModalMessage] = useState("");
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [registrationSuccess, setRegistrationSuccess] = useState(false);
+	const [modalOpen, setModalOpen] = useState(false);
+	const [statusMessage, setStatusMessage] = useState("");
+	const [menuOpen, setMenuOpen] = useState(false);
 
 	// Close menu on Escape and lock body scroll when open
 	useEffect(() => {
-		const onKey = (e) => {
-			if (e.key === "Escape") setIsMenuOpen(false);
+		const handleKeyDown = (e) => {
+			if (e.key === "Escape") setMenuOpen(false);
 		};
-		document.addEventListener("keydown", onKey);
-		if (isMenuOpen) {
+		document.addEventListener("keydown", handleKeyDown);
+		if (menuOpen) {
 			document.body.classList.add("overflow-hidden");
 		} else {
 			document.body.classList.remove("overflow-hidden");
 		}
 		return () => {
-			document.removeEventListener("keydown", onKey);
+			document.removeEventListener("keydown", handleKeyDown);
 			document.body.classList.remove("overflow-hidden");
 		};
-	}, [isMenuOpen]);
+	}, [menuOpen]);
 
-	const handleChange = (e) => {
-		setFormData({ ...formData, [e.target.name]: e.target.value });
-		if (error) setError("");
+	const handleInputChange = (e) => {
+		setFormValues({ ...formValues, [e.target.name]: e.target.value });
+		if (errorMessage) setErrorMessage("");
 	};
 
-	const handleSubmit = async (e) => {
+	const handleFormSubmit = async (e) => {
 		e.preventDefault();
 		setIsSubmitting(true);
 		try {
@@ -57,24 +57,24 @@ export default function MHPSignup() {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
-						...formData,
+						...formValues,
 						// send legacy field too for backward compatibility server side (will be ignored if not needed)
-						bmdcRegNo: formData.licenseNumber,
+						bmdcRegNo: formValues.licenseNumber,
 					}),
 				}
 			);
 			const data = await res.json();
 			if (!res.ok) throw new Error(data.message || "Registration failed");
 
-			setIsSuccess(true);
-			setModalMessage("Wait for the approval");
-			setIsModalOpen(true);
+			setRegistrationSuccess(true);
+			setStatusMessage("Wait for the approval");
+			setModalOpen(true);
 			setTimeout(() => {
 				router.push("/signin");
 			}, 2500);
 		} catch (err) {
-			setError(err.message);
-			setIsSuccess(false);
+			setErrorMessage(err.message);
+			setRegistrationSuccess(false);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -83,11 +83,11 @@ export default function MHPSignup() {
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 overflow-x-hidden">
 			{/* Approval Modal */}
-			{isModalOpen && (
+			{modalOpen && (
 				<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
 					<div className="p-6 rounded-lg shadow-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/40">
 						<p className="text-center mb-4 text-green-600 dark:text-green-300">
-							{modalMessage}
+							{statusMessage}
 						</p>
 						{/* <Button
               onClick={() => setIsModalOpen(false)}
@@ -113,7 +113,7 @@ export default function MHPSignup() {
 							<button
 								aria-label="Open menu"
 								className="inline-flex items-center justify-center p-2 rounded-md border border-slate-200/60 dark:border-slate-700/60 bg-white/70 dark:bg-slate-800/70 hover:bg-white/90 dark:hover:bg-slate-800/90 shadow-sm md:hidden"
-								onClick={() => setIsMenuOpen(true)}>
+								onClick={() => setMenuOpen(true)}>
 								<Menu className="h-5 w-5 text-slate-700 dark:text-slate-300" />
 							</button>
 						</div>
@@ -122,13 +122,13 @@ export default function MHPSignup() {
 			</header>
 
 			{/* Mobile Menu Drawer */}
-			{isMenuOpen && (
+			{menuOpen && (
 				<div className="fixed inset-0 z-[60]">
 					{/* overlay */}
 					<button
 						aria-label="Close menu"
 						className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-						onClick={() => setIsMenuOpen(false)}
+						onClick={() => setMenuOpen(false)}
 					/>
 					{/* panel */}
 					<div className="absolute right-0 top-0 h-full w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-l border-slate-200/60 dark:border-slate-700/60 shadow-2xl p-6 flex flex-col gap-4">
@@ -139,7 +139,7 @@ export default function MHPSignup() {
 							<button
 								aria-label="Close"
 								className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setIsMenuOpen(false)}>
+								onClick={() => setMenuOpen(false)}>
 								<X className="h-5 w-5 text-slate-700 dark:text-slate-300" />
 							</button>
 						</div>
@@ -147,31 +147,31 @@ export default function MHPSignup() {
 							<Link
 								href="/"
 								className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setIsMenuOpen(false)}>
+								onClick={() => setMenuOpen(false)}>
 								Home
 							</Link>
 							<Link
 								href="/about"
 								className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setIsMenuOpen(false)}>
+								onClick={() => setMenuOpen(false)}>
 								About
 							</Link>
 							<Link
 								href="/contact"
 								className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setIsMenuOpen(false)}>
+								onClick={() => setMenuOpen(false)}>
 								Contact
 							</Link>
 							<Link
 								href="/signin"
 								className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setIsMenuOpen(false)}>
+								onClick={() => setMenuOpen(false)}>
 								Sign in
 							</Link>
 							<Link
 								href="/signup/attendee"
 								className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setIsMenuOpen(false)}>
+								onClick={() => setMenuOpen(false)}>
 								Attendee Sign Up
 							</Link>
 							<span className="px-3 py-2 rounded-md bg-slate-100/60 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 cursor-default">
