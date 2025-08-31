@@ -19,71 +19,73 @@ import {
 import Link from "next/link";
 
 export default function MHPSignInPage() {
-	const [formData, setFormData] = useState({ email: "", password: "" });
-	const [error, setError] = useState("");
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [modalMessage, setModalMessage] = useState("");
-	const [isError, setIsError] = useState(false);
-	const [showPassword, setShowPassword] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
+	const [credentials, setCredentials] = useState({ email: "", password: "" });
+	const [errorMessage, setErrorMessage] = useState("");
+	const [modalOpen, setModalOpen] = useState(false);
+	const [statusMessage, setStatusMessage] = useState("");
+	const [hasError, setHasError] = useState(false);
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 
-	const handleChange = (e) => {
-		setFormData({ ...formData, [e.target.name]: e.target.value });
-		if (error) setError("");
+	const handleInputChange = (event) => {
+		setCredentials({ ...credentials, [event.target.name]: event.target.value });
+		if (errorMessage) setErrorMessage("");
 	};
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		setError("");
-		setIsLoading(true);
+	const handleFormSubmit = async (event) => {
+		event.preventDefault();
+		setErrorMessage("");
+		setLoading(true);
 
 		try {
-			const res = await fetch(
+			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/api/mhps/signin`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(formData),
+					body: JSON.stringify(credentials),
 				}
 			);
 
-			if (!res.ok) {
-				const data = await res.json().catch(() => ({}));
-				throw new Error(data.message || "Invalid credentials");
+			if (!response.ok) {
+				const payload = await response.json().catch(() => ({}));
+				throw new Error(payload.message || "Invalid credentials");
 			}
 
-			const data = await res.json();
+			const payload = await response.json();
 			localStorage.setItem("userType", "mhp");
-			localStorage.setItem("token", data.token);
-			localStorage.setItem("userId", data.userId);
-			localStorage.setItem("userName", data.userName);
-			localStorage.setItem("email", data.email);
+			localStorage.setItem("token", payload.token);
+			localStorage.setItem("userId", payload.userId);
+			localStorage.setItem("userName", payload.userName);
+			localStorage.setItem("email", payload.email);
 
-			const status = data.status;
-			if (status === "pending") {
-				setModalMessage("You can't sign in now. Wait for MHA Approval!");
-				setIsError(true);
-				setIsModalOpen(true);
-			} else if (status === "rejected") {
-				setModalMessage("Your registration has been rejected!");
-				setIsError(true);
-				setIsModalOpen(true);
-			} else if (status === "approved") {
-				router.push(`/dashboard/mhp/${data.userName}`);
+			const accountStatus = payload.status;
+			if (accountStatus === "pending") {
+				setStatusMessage("You can't sign in now. Wait for MHA Approval!");
+				setHasError(true);
+				setModalOpen(true);
+			} else if (accountStatus === "rejected") {
+				setStatusMessage("Your registration has been rejected!");
+				setHasError(true);
+				setModalOpen(true);
+			} else if (accountStatus === "approved") {
+				router.push(`/dashboard/mhp/${payload.userName}`);
 			} else {
-				setModalMessage("Unknown account status");
-				setIsError(true);
-				setIsModalOpen(true);
+				setStatusMessage("Unknown account status");
+				setHasError(true);
+				setModalOpen(true);
 			}
-		} catch (err) {
-			setError(err.message || "Something went wrong. Please try again.");
+		} catch (errorObj) {
+			setErrorMessage(
+				errorObj.message || "Something went wrong. Please try again."
+			);
 		} finally {
-			setIsLoading(false);
+			setLoading(false);
 		}
 	};
 
-	const containerVariants = {
+	const containerMotion = {
 		hidden: { opacity: 0, y: 20 },
 		visible: {
 			opacity: 1,
@@ -91,7 +93,7 @@ export default function MHPSignInPage() {
 			transition: { duration: 0.6, ease: "easeOut", staggerChildren: 0.1 },
 		},
 	};
-	const itemVariants = {
+	const itemMotion = {
 		hidden: { opacity: 0, y: 20 },
 		visible: {
 			opacity: 1,
@@ -99,7 +101,7 @@ export default function MHPSignInPage() {
 			transition: { duration: 0.5, ease: "easeOut" },
 		},
 	};
-	const modalVariants = {
+	const modalMotion = {
 		hidden: { opacity: 0, scale: 0.8 },
 		visible: {
 			opacity: 1,
@@ -147,13 +149,13 @@ export default function MHPSignInPage() {
 			</motion.div>
 
 			<motion.div
-				variants={containerVariants}
+				variants={containerMotion}
 				initial="hidden"
 				animate="visible"
 				className="w-full max-w-md z-10">
-				<motion.div variants={itemVariants}>
+				<motion.div variants={itemMotion}>
 					<Card className="p-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-0 shadow-2xl">
-						<motion.div variants={itemVariants} className="text-center mb-8">
+						<motion.div variants={itemMotion} className="text-center mb-8">
 							<motion.div
 								initial={{ scale: 0 }}
 								animate={{ scale: 1 }}
@@ -170,7 +172,7 @@ export default function MHPSignInPage() {
 						</motion.div>
 
 						<AnimatePresence>
-							{error && (
+							{errorMessage && (
 								<motion.div
 									initial={{ opacity: 0, y: -10, height: 0 }}
 									animate={{ opacity: 1, y: 0, height: "auto" }}
@@ -179,14 +181,14 @@ export default function MHPSignInPage() {
 									className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center space-x-3">
 									<AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
 									<p className="text-red-700 dark:text-red-300 text-sm">
-										{error}
+										{errorMessage}
 									</p>
 								</motion.div>
 							)}
 						</AnimatePresence>
 
-						<form onSubmit={handleSubmit} className="space-y-6">
-							<motion.div variants={itemVariants}>
+						<form onSubmit={handleFormSubmit} className="space-y-6">
+							<motion.div variants={itemMotion}>
 								<Label
 									htmlFor="email"
 									className="text-slate-700 dark:text-slate-300 font-medium">
@@ -198,8 +200,8 @@ export default function MHPSignInPage() {
 										id="email"
 										name="email"
 										type="email"
-										value={formData.email}
-										onChange={handleChange}
+										value={credentials.email}
+										onChange={handleInputChange}
 										placeholder="Enter your email"
 										className="pl-10 h-12 border-2 focus:border-fuchsia-500 focus:ring-fuchsia-500 transition-colors duration-200"
 										required
@@ -207,7 +209,7 @@ export default function MHPSignInPage() {
 								</div>
 							</motion.div>
 
-							<motion.div variants={itemVariants}>
+							<motion.div variants={itemMotion}>
 								<Label
 									htmlFor="password"
 									className="text-slate-700 dark:text-slate-300 font-medium">
@@ -218,9 +220,9 @@ export default function MHPSignInPage() {
 									<Input
 										id="password"
 										name="password"
-										type={showPassword ? "text" : "password"}
-										value={formData.password}
-										onChange={handleChange}
+										type={isPasswordVisible ? "text" : "password"}
+										value={credentials.password}
+										onChange={handleInputChange}
 										placeholder="Enter your password"
 										className="pl-10 pr-10 h-12 border-2 focus:border-fuchsia-500 focus:ring-fuchsia-500 transition-colors duration-200"
 										required
@@ -229,9 +231,9 @@ export default function MHPSignInPage() {
 										type="button"
 										whileHover={{ scale: 1.1 }}
 										whileTap={{ scale: 0.9 }}
-										onClick={() => setShowPassword(!showPassword)}
+										onClick={() => setIsPasswordVisible(!isPasswordVisible)}
 										className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors duration-200">
-										{showPassword ? (
+										{isPasswordVisible ? (
 											<EyeOff className="w-5 h-5" />
 										) : (
 											<Eye className="w-5 h-5" />
@@ -240,14 +242,14 @@ export default function MHPSignInPage() {
 								</div>
 							</motion.div>
 
-							<motion.div variants={itemVariants}>
+							<motion.div variants={itemMotion}>
 								<motion.button
 									type="submit"
-									disabled={isLoading}
+									disabled={loading}
 									whileHover={{ scale: 1.02 }}
 									whileTap={{ scale: 0.98 }}
 									className="w-full bg-gradient-to-r from-fuchsia-600 to-purple-500 hover:from-fuchsia-700 hover:to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg btn-hover-lift transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed h-12">
-									{isLoading ? (
+									{loading ? (
 										<div className="flex items-center justify-center space-x-2">
 											<div className="spinner"></div>
 											<span>Signing In...</span>
@@ -260,7 +262,7 @@ export default function MHPSignInPage() {
 						</form>
 
 						<motion.div
-							variants={itemVariants}
+							variants={itemMotion}
 							className="mt-8 text-center space-y-4">
 							<div className="flex items-center justify-center space-x-2 text-sm">
 								<span className="text-slate-600 dark:text-slate-400">
@@ -278,24 +280,28 @@ export default function MHPSignInPage() {
 			</motion.div>
 
 			<AnimatePresence>
-				{isModalOpen && (
+				{modalOpen && (
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
-						onClick={() => setIsModalOpen(false)}>
+						onClick={() => setModalOpen(false)}>
 						<motion.div
-							variants={modalVariants}
+							variants={modalMotion}
 							initial="hidden"
 							animate="visible"
 							exit="exit"
-							onClick={(e) => e.stopPropagation()}
+							onClick={(event) => event.stopPropagation()}
 							className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl">
 							<div className="flex items-center space-x-4 mb-6">
 								<div
-									className={`w-12 h-12 rounded-full flex items-center justify-center ${isError ? "bg-red-100 dark:bg-red-900/20" : "bg-green-100 dark:bg-green-900/20"}`}>
-									{isError ? (
+									className={`w-12 h-12 rounded-full flex items-center justify-center ${
+										hasError
+											? "bg-red-100 dark:bg-red-900/20"
+											: "bg-green-100 dark:bg-green-900/20"
+									}`}>
+									{hasError ? (
 										<AlertCircle className="w-6 h-6 text-red-500" />
 									) : (
 										<CheckCircle className="w-6 h-6 text-green-500" />
@@ -303,19 +309,27 @@ export default function MHPSignInPage() {
 								</div>
 								<div>
 									<h3
-										className={`text-lg font-semibold ${isError ? "text-red-900 dark:text-red-100" : "text-green-900 dark:text-green-100"}`}>
-										{isError ? "Error" : "Success"}
+										className={`text-lg font-semibold ${
+											hasError
+												? "text-red-900 dark:text-red-100"
+												: "text-green-900 dark:text-green-100"
+										}`}>
+										{hasError ? "Error" : "Success"}
 									</h3>
 									<p
-										className={`text-sm ${isError ? "text-red-600 dark:text-red-300" : "text-green-600 dark:text-green-300"}`}>
-										{modalMessage}
+										className={`text-sm ${
+											hasError
+												? "text-red-600 dark:text-red-300"
+												: "text-green-600 dark:text-green-300"
+										}`}>
+										{statusMessage}
 									</p>
 								</div>
 							</div>
 							<motion.button
 								whileHover={{ scale: 1.02 }}
 								whileTap={{ scale: 0.98 }}
-								onClick={() => setIsModalOpen(false)}
+								onClick={() => setModalOpen(false)}
 								className="w-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
 								Close
 							</motion.button>
