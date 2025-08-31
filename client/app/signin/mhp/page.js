@@ -116,9 +116,9 @@ export default function MHPSignInPage() {
 	};
 
 	return (
-		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-purple-50 to-fuchsia-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-6 overflow-x-hidden">
+		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-6 overflow-x-hidden">
 			<div className="absolute inset-0 overflow-hidden">
-				<div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-fuchsia-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+				<div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-teal-400/20 rounded-full blur-3xl"></div>
 				<div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-indigo-400/20 to-teal-400/20 rounded-full blur-3xl"></div>
 			</div>
 
@@ -131,10 +131,10 @@ export default function MHPSignInPage() {
 					<motion.div
 						whileHover={{ scale: 1.05 }}
 						transition={{ duration: 0.2 }}
-						className="w-10 h-10 bg-gradient-to-r from-fuchsia-600 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
+						className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
 						<Heart className="w-6 h-6 text-white" />
 					</motion.div>
-					<span className="text-2xl font-bold bg-gradient-to-r from-fuchsia-600 to-purple-500 bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-200">
+					<span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-200">
 						Calmly
 					</span>
 				</Link>
@@ -160,7 +160,7 @@ export default function MHPSignInPage() {
 								initial={{ scale: 0 }}
 								animate={{ scale: 1 }}
 								transition={{ duration: 0.5, delay: 0.3 }}
-								className="w-16 h-16 bg-gradient-to-r from-fuchsia-600 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+								className="w-16 h-16 bg-gradient-to-r from-indigo-600 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
 								<Shield className="w-8 h-8 text-white" />
 							</motion.div>
 							<h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
@@ -203,7 +203,7 @@ export default function MHPSignInPage() {
 										value={credentials.email}
 										onChange={handleInputChange}
 										placeholder="Enter your email"
-										className="pl-10 h-12 border-2 focus:border-fuchsia-500 focus:ring-fuchsia-500 transition-colors duration-200"
+										className="pl-10 h-12 border-2 focus:border-indigo-500 focus:ring-indigo-500 transition-colors duration-200"
 										required
 									/>
 								</div>
@@ -224,7 +224,7 @@ export default function MHPSignInPage() {
 										value={credentials.password}
 										onChange={handleInputChange}
 										placeholder="Enter your password"
-										className="pl-10 pr-10 h-12 border-2 focus:border-fuchsia-500 focus:ring-fuchsia-500 transition-colors duration-200"
+										className="pl-10 pr-10 h-12 border-2 focus:border-indigo-500 focus:ring-indigo-500 transition-colors duration-200"
 										required
 									/>
 									<motion.button
@@ -248,7 +248,7 @@ export default function MHPSignInPage() {
 									disabled={loading}
 									whileHover={{ scale: 1.02 }}
 									whileTap={{ scale: 0.98 }}
-									className="w-full bg-gradient-to-r from-fuchsia-600 to-purple-500 hover:from-fuchsia-700 hover:to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg btn-hover-lift transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed h-12">
+									className="w-full bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg btn-hover-lift transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed h-12">
 									{loading ? (
 										<div className="flex items-center justify-center space-x-2">
 											<div className="spinner"></div>
@@ -270,7 +270,7 @@ export default function MHPSignInPage() {
 								</span>
 								<Link
 									href="/forgot-password"
-									className="text-fuchsia-600 dark:text-fuchsia-400 hover:text-fuchsia-700 dark:hover:text-fuchsia-300 font-medium transition-colors">
+									className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors">
 									Reset Password
 								</Link>
 							</div>
