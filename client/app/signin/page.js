@@ -1,24 +1,26 @@
 /**
- * Sign-in Role Chooser Page
- * Provides links to attendee and MHP specific sign-in pages.
+ * Sign-in Role Selector
+ * Links to attendee and MHP sign-in pages.
  */
 "use client";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { Card } from "@/components/ui/card";
-import { motion } from "framer-motion";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Heart, User, Stethoscope } from "lucide-react";
 
-export default function SignInChooserPage() {
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Card } from "@/components/ui/card";
+
+export default function SignInRoleSelectorPage() {
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-6 overflow-x-hidden">
-			{/* Background Pattern */}
+			{/* Background accents */}
 			<div className="absolute inset-0 overflow-hidden">
 				<div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-teal-400/20 rounded-full blur-3xl" />
 				<div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-400/20 to-pink-400/20 rounded-full blur-3xl" />
 			</div>
 
-			{/* Navigation */}
+			{/* Brand nav */}
 			<motion.div
 				initial={{ opacity: 0, y: -20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -37,7 +39,7 @@ export default function SignInChooserPage() {
 				</Link>
 			</motion.div>
 
-			{/* Theme Toggle */}
+			{/* Theme toggle */}
 			<motion.div
 				initial={{ opacity: 0, y: -20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -46,7 +48,7 @@ export default function SignInChooserPage() {
 				<ThemeToggle />
 			</motion.div>
 
-			{/* Main Card */}
+			{/* Main selection card */}
 			<div className="w-full max-w-2xl z-10">
 				<Card className="p-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-0 shadow-2xl">
 					<div className="text-center mb-10">
@@ -76,6 +78,7 @@ export default function SignInChooserPage() {
 								</div>
 							</div>
 						</Link>
+
 						<Link
 							href="/signin/mhp"
 							className="group rounded-xl border border-slate-200 dark:border-slate-700 p-6 bg-slate-50/70 dark:bg-slate-900/20 hover:bg-white dark:hover:bg-slate-900 transition-colors shadow-sm">
