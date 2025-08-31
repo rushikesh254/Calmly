@@ -10,8 +10,9 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { motion } from "framer-motion";
 import { Heart, Users, UserCheck, ArrowRight } from "lucide-react";
 
-export default function SignupPage() {
-	const containerVariants = {
+export default function SignUpPage() {
+	// Page-wide stagger settings for entrance animations
+	const staggeredContainer = {
 		hidden: { opacity: 0 },
 		visible: {
 			opacity: 1,
@@ -22,7 +23,8 @@ export default function SignupPage() {
 		},
 	};
 
-	const itemVariants = {
+	// Single-item fade-and-lift motion
+	const fadeInUp = {
 		hidden: { opacity: 0, y: 20 },
 		visible: {
 			opacity: 1,
@@ -88,16 +90,14 @@ export default function SignupPage() {
 
 			{/* Main Content */}
 			<motion.main
-				variants={containerVariants}
+				variants={staggeredContainer}
 				initial="hidden"
 				animate="visible"
 				className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<div className="flex items-center justify-center min-h-[calc(100vh-160px)] supports-[height:100dvh]:min-h-[calc(100dvh-160px)]">
-					<motion.div variants={itemVariants} className="w-full max-w-2xl">
+					<motion.div variants={fadeInUp} className="w-full max-w-2xl">
 						<Card className="p-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-0 shadow-2xl card-hover">
-							<motion.div
-								variants={itemVariants}
-								className="space-y-8 text-center">
+							<motion.div variants={fadeInUp} className="space-y-8 text-center">
 								<motion.div
 									initial={{ scale: 0 }}
 									animate={{ scale: 1 }}
@@ -118,7 +118,7 @@ export default function SignupPage() {
 								</motion.div>
 
 								<motion.div
-									variants={containerVariants}
+									variants={staggeredContainer}
 									className="grid grid-cols-1 md:grid-cols-2 gap-8">
 									<motion.div
 										variants={cardVariants}
@@ -199,7 +199,7 @@ export default function SignupPage() {
 									</motion.div>
 								</motion.div>
 
-								<motion.div variants={itemVariants} className="relative">
+								<motion.div variants={fadeInUp} className="relative">
 									<div className="absolute inset-0 flex items-center">
 										<span className="w-full border-t border-slate-200 dark:border-slate-700" />
 									</div>
@@ -210,7 +210,7 @@ export default function SignupPage() {
 									</div>
 								</motion.div>
 
-								<motion.div variants={itemVariants} className="text-center">
+								<motion.div variants={fadeInUp} className="text-center">
 									<Link
 										href="/signin"
 										className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors duration-200 text-lg">
