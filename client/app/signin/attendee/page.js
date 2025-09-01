@@ -10,49 +10,49 @@ import { Heart, Eye, EyeOff, Lock, Mail, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function AttendeeSignInPage() {
-	const [formData, setFormData] = useState({ email: "", password: "" });
-	const [error, setError] = useState("");
-	const [showPassword, setShowPassword] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
+	const [credentials, setCredentials] = useState({ email: "", password: "" });
+	const [errorMessage, setErrorMessage] = useState("");
+	const [passwordVisible, setPasswordVisible] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 
-	const handleChange = (e) => {
-		setFormData({ ...formData, [e.target.name]: e.target.value });
-		if (error) setError("");
+	const handleInputChange = (event) => {
+		setCredentials({ ...credentials, [event.target.name]: event.target.value });
+		if (errorMessage) setErrorMessage("");
 	};
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		setError("");
-		setIsLoading(true);
+	const handleFormSubmit = async (event) => {
+		event.preventDefault();
+		setErrorMessage("");
+		setLoading(true);
 		try {
-			const res = await fetch(
+			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/api/attendees/signin`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(formData),
+					body: JSON.stringify(credentials),
 				}
 			);
-			if (!res.ok) {
-				const data = await res.json().catch(() => ({}));
-				throw new Error(data.message || "Invalid credentials");
+			if (!response.ok) {
+				const payload = await response.json().catch(() => ({}));
+				throw new Error(payload.message || "Invalid credentials");
 			}
-			const data = await res.json();
+			const payload = await response.json();
 			localStorage.setItem("userType", "attendee");
-			localStorage.setItem("token", data.token);
-			localStorage.setItem("userName", data.userName);
-			localStorage.setItem("userId", data.userId);
-			localStorage.setItem("email", data.email);
-			router.push(`/dashboard/attendee/${data.userName}`);
-		} catch (err) {
-			setError(err.message || "Sign in failed");
+			localStorage.setItem("token", payload.token);
+			localStorage.setItem("userName", payload.userName);
+			localStorage.setItem("userId", payload.userId);
+			localStorage.setItem("email", payload.email);
+			router.push(`/dashboard/attendee/${payload.userName}`);
+		} catch (errorObj) {
+			setErrorMessage(errorObj.message || "Sign in failed");
 		} finally {
-			setIsLoading(false);
+			setLoading(false);
 		}
 	};
 
-	const containerVariants = {
+	const staggeredContainer = {
 		hidden: { opacity: 0, y: 20 },
 		visible: {
 			opacity: 1,
@@ -60,7 +60,7 @@ export default function AttendeeSignInPage() {
 			transition: { duration: 0.6, ease: "easeOut", staggerChildren: 0.1 },
 		},
 	};
-	const itemVariants = {
+	const fadeInUp = {
 		hidden: { opacity: 0, y: 20 },
 		visible: {
 			opacity: 1,
@@ -103,13 +103,13 @@ export default function AttendeeSignInPage() {
 			</motion.div>
 
 			<motion.div
-				variants={containerVariants}
+				variants={staggeredContainer}
 				initial="hidden"
 				animate="visible"
 				className="w-full max-w-md z-10">
-				<motion.div variants={itemVariants}>
+				<motion.div variants={fadeInUp}>
 					<Card className="p-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-0 shadow-2xl">
-						<motion.div variants={itemVariants} className="text-center mb-8">
+						<motion.div variants={fadeInUp} className="text-center mb-8">
 							<motion.div
 								initial={{ scale: 0 }}
 								animate={{ scale: 1 }}
@@ -126,7 +126,7 @@ export default function AttendeeSignInPage() {
 						</motion.div>
 
 						<AnimatePresence>
-							{error && (
+							{errorMessage && (
 								<motion.div
 									initial={{ opacity: 0, y: -10, height: 0 }}
 									animate={{ opacity: 1, y: 0, height: "auto" }}
@@ -135,14 +135,14 @@ export default function AttendeeSignInPage() {
 									className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center space-x-3">
 									<AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
 									<p className="text-red-700 dark:text-red-300 text-sm">
-										{error}
+										{errorMessage}
 									</p>
 								</motion.div>
 							)}
 						</AnimatePresence>
 
-						<form onSubmit={handleSubmit} className="space-y-6">
-							<motion.div variants={itemVariants}>
+						<form onSubmit={handleFormSubmit} className="space-y-6">
+							<motion.div variants={fadeInUp}>
 								<Label
 									htmlFor="email"
 									className="text-slate-700 dark:text-slate-300 font-medium">
@@ -154,8 +154,8 @@ export default function AttendeeSignInPage() {
 										id="email"
 										name="email"
 										type="email"
-										value={formData.email}
-										onChange={handleChange}
+										value={credentials.email}
+										onChange={handleInputChange}
 										placeholder="Enter your email"
 										className="pl-10 h-12 border-2 focus:border-indigo-500 focus:ring-indigo-500 transition-colors duration-200"
 										required
@@ -163,7 +163,7 @@ export default function AttendeeSignInPage() {
 								</div>
 							</motion.div>
 
-							<motion.div variants={itemVariants}>
+							<motion.div variants={fadeInUp}>
 								<Label
 									htmlFor="password"
 									className="text-slate-700 dark:text-slate-300 font-medium">
@@ -174,9 +174,9 @@ export default function AttendeeSignInPage() {
 									<Input
 										id="password"
 										name="password"
-										type={showPassword ? "text" : "password"}
-										value={formData.password}
-										onChange={handleChange}
+										type={passwordVisible ? "text" : "password"}
+										value={credentials.password}
+										onChange={handleInputChange}
 										placeholder="Enter your password"
 										className="pl-10 pr-10 h-12 border-2 focus:border-indigo-500 focus:ring-indigo-500 transition-colors duration-200"
 										required
@@ -185,7 +185,7 @@ export default function AttendeeSignInPage() {
 										type="button"
 										whileHover={{ scale: 1.1 }}
 										whileTap={{ scale: 0.9 }}
-										onClick={() => setShowPassword(!showPassword)}
+										onClick={() => setPasswordVisible(!passwordVisible)}
 										className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors duration-200">
 										{showPassword ? (
 											<EyeOff className="w-5 h-5" />
@@ -196,14 +196,14 @@ export default function AttendeeSignInPage() {
 								</div>
 							</motion.div>
 
-							<motion.div variants={itemVariants}>
+							<motion.div variants={fadeInUp}>
 								<motion.button
 									type="submit"
-									disabled={isLoading}
+									disabled={loading}
 									whileHover={{ scale: 1.02 }}
 									whileTap={{ scale: 0.98 }}
 									className="w-full bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg btn-hover-lift transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed h-12">
-									{isLoading ? (
+									{loading ? (
 										<div className="flex items-center justify-center space-x-2">
 											<div className="spinner"></div>
 											<span>Signing In...</span>
@@ -216,7 +216,7 @@ export default function AttendeeSignInPage() {
 						</form>
 
 						<motion.div
-							variants={itemVariants}
+							variants={fadeInUp}
 							className="mt-8 text-center space-y-4">
 							<div className="flex items-center justify-center space-x-2 text-sm">
 								<span className="text-slate-600 dark:text-slate-400">
