@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-const fetchAttendeeProfile = async (userName) => {
+// Fetch the attendee profile from the API for the given username
+const getAttendeeProfile = async (userName) => {
 	const response = await fetch(
 		`${process.env.NEXT_PUBLIC_API_URL}/api/attendees/${userName}`,
 		{
@@ -13,13 +14,14 @@ const fetchAttendeeProfile = async (userName) => {
 	return await response.json();
 };
 
-const updateAttendeeProfile = async (userName, profileData) => {
+// Update the attendee profile for the given username with provided payload
+const saveAttendeeProfile = async (userName, profile) => {
 	const response = await fetch(
 		`${process.env.NEXT_PUBLIC_API_URL}/api/attendees/${userName}`,
 		{
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(profileData),
+			body: JSON.stringify(profile),
 		}
 	);
 	if (!response.ok) throw new Error("Failed to update profile");
@@ -27,57 +29,63 @@ const updateAttendeeProfile = async (userName, profileData) => {
 };
 
 const AttendeeProfile = ({ userName }) => {
-	const [isEditing, setIsEditing] = useState(false);
-	const [profileData, setProfileData] = useState({});
-	const [error, setError] = useState(null);
+	// UI state
+	const [editing, setEditing] = useState(false);
+	const [profile, setProfile] = useState({});
+	const [errorMessage, setErrorMessage] = useState(null);
 
+	// Load profile when username changes
 	useEffect(() => {
-		const loadProfile = async () => {
+		const loadProfileData = async () => {
 			try {
-				const data = await fetchAttendeeProfile(userName);
-				setProfileData(data);
+				const data = await getAttendeeProfile(userName);
+				setProfile(data);
 			} catch {
-				setError("Error loading profile data");
+				setErrorMessage("Error loading profile data");
 			}
 		};
-		if (userName) loadProfile();
+		if (userName) loadProfileData();
 	}, [userName]);
 
-	const handleChange = (e) => {
+	// Controlled input handler
+	const handleInputChange = (e) => {
 		const { name, value } = e.target;
-		setProfileData((prev) => ({ ...prev, [name]: value }));
+		setProfile((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const handleSave = async () => {
+	// Save changes to the API
+	const handleSaveChanges = async () => {
 		try {
-			const updatedData = await updateAttendeeProfile(userName, profileData);
-			setProfileData(updatedData.attendee);
-			setIsEditing(false);
+			const updated = await saveAttendeeProfile(userName, profile);
+			setProfile(updated.attendee);
+			setEditing(false);
 		} catch {
-			setError("Error saving profile data");
+			setErrorMessage("Error saving profile data");
 		}
 	};
 
-	if (error) return <div className="text-red-600">{error}</div>;
+	if (errorMessage) return <div className="text-red-600">{errorMessage}</div>;
 
-	const ProfileRow = ({ label, value }) => (
+	// Reusable row for read-only profile fields
+	const ProfileRowItem = ({ label, value }) => (
 		<div className="flex justify-between items-center py-4 px-2 hover:bg-slate-50/50 rounded-lg transition-colors">
 			<span className="text-sm font-medium text-slate-600">{label}</span>
 			<span className="text-slate-900 font-medium">{value || "-"}</span>
 		</div>
 	);
+
 	return (
 		<div className="max-w-2xl mx-auto mt-10">
 			<div
 				className="p-8 rounded-2xl border border-slate-200/60
-                      bg-white/80 backdrop-blur-lg
-                      hover:border-indigo-200/80 hover:shadow-2xl
-                      transition-all duration-300 hover:-translate-y-2
-                      shadow-xl shadow-indigo-100/20">
+					  bg-white/80 backdrop-blur-lg
+					  hover:border-indigo-200/80 hover:shadow-2xl
+					  transition-all duration-300 hover:-translate-y-2
+					  shadow-xl shadow-indigo-100/20">
 				<h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent mb-8">
 					Attendee Profile
 				</h3>
-				{isEditing ? (
+				{editing ? (
 					<div className="space-y-6">
 						{/* Read-only fields */}
 						<div className="space-y-4">
@@ -86,7 +94,7 @@ const AttendeeProfile = ({ userName }) => {
 									Username
 								</label>
 								<p className="mt-1 text-slate-900 font-medium">
-									{profileData.username}
+									{profile.username}
 								</p>
 							</div>
 							<div className="bg-slate-50/50 p-4 rounded-xl border border-slate-200/40">
@@ -94,7 +102,7 @@ const AttendeeProfile = ({ userName }) => {
 									Email
 								</label>
 								<p className="mt-1 text-slate-900 font-medium">
-									{profileData.email}
+									{profile.email}
 								</p>
 							</div>
 						</div>
@@ -108,12 +116,12 @@ const AttendeeProfile = ({ userName }) => {
 								<input
 									type="text"
 									name="address"
-									value={profileData.address || ""}
-									onChange={handleChange}
+									value={profile.address || ""}
+									onChange={handleInputChange}
 									className="w-full px-4 py-3 border border-slate-200/60 rounded-xl 
-                            bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
-                            focus:border-indigo-300/50 transition-all outline-none
-                            placeholder:text-slate-400/80"
+							bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
+							focus:border-indigo-300/50 transition-all outline-none
+							placeholder:text-slate-400/80"
 									placeholder="Enter your address"
 								/>
 							</div>
@@ -125,12 +133,12 @@ const AttendeeProfile = ({ userName }) => {
 								<input
 									type="text"
 									name="phoneNumber"
-									value={profileData.phoneNumber || ""}
-									onChange={handleChange}
+									value={profile.phoneNumber || ""}
+									onChange={handleInputChange}
 									className="w-full px-4 py-3 border border-slate-200/60 rounded-xl 
-                            bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
-                            focus:border-indigo-300/50 transition-all outline-none
-                            placeholder:text-slate-400/80"
+							bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
+							focus:border-indigo-300/50 transition-all outline-none
+							placeholder:text-slate-400/80"
 									placeholder="Enter phone number"
 								/>
 							</div>
@@ -143,11 +151,11 @@ const AttendeeProfile = ({ userName }) => {
 									<input
 										type="number"
 										name="age"
-										value={profileData.age || ""}
-										onChange={handleChange}
+										value={profile.age || ""}
+										onChange={handleInputChange}
 										className="w-full px-4 py-3 border border-slate-200/60 rounded-xl 
-                              bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
-                              focus:border-indigo-300/50 transition-all outline-none"
+							  bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
+							  focus:border-indigo-300/50 transition-all outline-none"
 									/>
 								</div>
 
@@ -157,11 +165,11 @@ const AttendeeProfile = ({ userName }) => {
 									</label>
 									<select
 										name="sex"
-										value={profileData.sex || ""}
-										onChange={handleChange}
+										value={profile.sex || ""}
+										onChange={handleInputChange}
 										className="w-full px-4 py-3 border border-slate-200/60 rounded-xl 
-                              bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
-                              focus:border-indigo-300/50 transition-all outline-none">
+							  bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
+							  focus:border-indigo-300/50 transition-all outline-none">
 										<option value="">Select Sex</option>
 										<option value="Male">Male</option>
 										<option value="Female">Female</option>
@@ -172,34 +180,34 @@ const AttendeeProfile = ({ userName }) => {
 						</div>
 
 						<button
-							onClick={handleSave}
+							onClick={handleSaveChanges}
 							className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-indigo-600 to-teal-500 text-white 
-                        rounded-lg font-semibold hover:from-indigo-700 hover:to-teal-600 
-                        transition-all transform hover:scale-[1.02] shadow-md hover:shadow-indigo-200/40
-                        active:scale-95 text-sm">
+						rounded-lg font-semibold hover:from-indigo-700 hover:to-teal-600 
+						transition-all transform hover:scale-[1.02] shadow-md hover:shadow-indigo-200/40
+						active:scale-95 text-sm">
 							Save Changes
 						</button>
 					</div>
 				) : (
 					<div className="space-y-6">
 						<div className="divide-y divide-slate-200/60">
-							<ProfileRow label="Username" value={profileData.username} />
-							<ProfileRow label="Email" value={profileData.email} />
-							<ProfileRow label="Address" value={profileData.address} />
-							<ProfileRow
+							<ProfileRowItem label="Username" value={profile.username} />
+							<ProfileRowItem label="Email" value={profile.email} />
+							<ProfileRowItem label="Address" value={profile.address} />
+							<ProfileRowItem
 								label="Phone Number"
-								value={profileData.phoneNumber}
+								value={profile.phoneNumber}
 							/>
-							<ProfileRow label="Age" value={profileData.age} />
-							<ProfileRow label="Sex" value={profileData.sex} />
+							<ProfileRowItem label="Age" value={profile.age} />
+							<ProfileRowItem label="Sex" value={profile.sex} />
 						</div>
 
 						<button
-							onClick={() => setIsEditing(true)}
+							onClick={() => setEditing(true)}
 							className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-indigo-600 to-teal-500 text-white 
-                        rounded-lg font-semibold hover:from-indigo-700 hover:to-teal-600 
-                        transition-all transform hover:scale-[1.02] shadow-md hover:shadow-indigo-200/40
-                        active:scale-95 text-sm">
+						rounded-lg font-semibold hover:from-indigo-700 hover:to-teal-600 
+						transition-all transform hover:scale-[1.02] shadow-md hover:shadow-indigo-200/40
+						active:scale-95 text-sm">
 							Edit Profile
 						</button>
 					</div>
