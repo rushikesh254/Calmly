@@ -196,13 +196,13 @@ export default function MHPSignUpPage() {
 								</p>
 							</div>
 
-							{error && (
+							{errorMessage && (
 								<div className="py-3 px-4 text-sm border border-red-400/50 bg-red-500/10 dark:bg-red-950/30 dark:border-red-900/40 text-red-700 dark:text-red-300 rounded-lg">
-									{error}
+									{errorMessage}
 								</div>
 							)}
 
-							<form onSubmit={handleSubmit} className="space-y-6">
+							<form onSubmit={handleFormSubmit} className="space-y-6">
 								<div className="space-y-4">
 									<div className="space-y-2">
 										<Label
@@ -213,7 +213,7 @@ export default function MHPSignUpPage() {
 										<Input
 											type="text"
 											name="username"
-											onChange={handleChange}
+											onChange={handleInputChange}
 											required
 											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
 										/>
@@ -227,7 +227,7 @@ export default function MHPSignUpPage() {
 										<Input
 											type="text"
 											name="licenseNumber"
-											onChange={handleChange}
+											onChange={handleInputChange}
 											required
 											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
 										/>
@@ -241,7 +241,7 @@ export default function MHPSignUpPage() {
 										<Input
 											type="email"
 											name="email"
-											onChange={handleChange}
+											onChange={handleInputChange}
 											required
 											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
 										/>
@@ -255,7 +255,7 @@ export default function MHPSignUpPage() {
 										<Input
 											type="password"
 											name="password"
-											onChange={handleChange}
+											onChange={handleInputChange}
 											required
 											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
 										/>
@@ -265,8 +265,8 @@ export default function MHPSignUpPage() {
 								<Button
 									type="submit"
 									className="w-full bg-gradient-to-r from-indigo-600 to-teal-500 text-white hover:from-indigo-700 hover:to-teal-600 transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-indigo-200/40"
-									disabled={isSubmitting || isSuccess}>
-									{isSuccess
+									disabled={isSubmitting || registrationSuccess}>
+									{registrationSuccess
 										? "Account Created! 🎉"
 										: isSubmitting
 										? "Registering..."

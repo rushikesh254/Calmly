@@ -13,10 +13,15 @@ export const ProfessionalCard = ({
 			? localStorage.getItem("token") || localStorage.getItem("accessToken")
 			: null;
 
-	// Initialize from sessionStatus on mount
+	// Initialize from sessionStatus when provided
 	useEffect(() => {
-		if (sessionStatus?.status === "pending") {
-			setRequestedSessionType(sessionStatus.type);
+		if (sessionStatus && typeof sessionStatus === "object") {
+			if (sessionStatus.status === "pending" && sessionStatus.type) {
+				setRequestedSessionType(sessionStatus.type);
+			}
+		} else if (typeof sessionStatus === "string") {
+			// Backward compatibility when only the type string was provided
+			setRequestedSessionType(sessionStatus);
 		}
 	}, [sessionStatus]);
 
@@ -40,7 +45,9 @@ export const ProfessionalCard = ({
 				`${process.env.NEXT_PUBLIC_API_URL}/api/book/${slotId}`,
 				{
 					method: "POST",
-					headers: { Authorization: `Bearer ${userToken}` },
+					headers: {
+						...(userToken ? { Authorization: `Bearer ${userToken}` } : {}),
+					},
 				}
 			);
 			const data = await res.json();
@@ -49,7 +56,7 @@ export const ProfessionalCard = ({
 					prev.map((s) => (s._id === slotId ? { ...s, isBooked: true } : s))
 				);
 				setBookingMsg("Slot booked successfully");
-			} else setBookingMsg(data.error || "Booking failed");
+			} else setBookingMsg(data?.error || "Booking failed");
 		} catch {
 			setBookingMsg("Network error");
 		} finally {
@@ -60,7 +67,7 @@ export const ProfessionalCard = ({
 	const handleRequestSession = (sessionType) => {
 		if (!requestedSessionType) {
 			setRequestedSessionType(sessionType);
-			onRequestSession(professional.email, sessionType);
+			onRequestSession?.(professional.email, sessionType);
 		}
 	};
 
@@ -164,7 +171,7 @@ export const ProfessionalCard = ({
 								? "bg-teal-50 text-teal-700 border border-teal-100"
 								: "bg-indigo-50 text-indigo-700 border border-indigo-100"
 						}`}>
-						<span className="font-medium font-semibold">
+						<span className="font-semibold">
 							{requestedSessionType.charAt(0).toUpperCase() +
 								requestedSessionType.slice(1)}{" "}
 							session requested
@@ -177,12 +184,12 @@ export const ProfessionalCard = ({
 					<div className="flex gap-3">
 						<button
 							onClick={() => handleRequestSession("online")}
-							className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-teal-600 hover:bg-teal-700 text-white transition-all text-sm font-medium font-semibold">
+							className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-teal-600 hover:bg-teal-700 text-white transition-all text-sm font-semibold">
 							Request Online Session
 						</button>
 						<button
 							onClick={() => handleRequestSession("offline")}
-							className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-all text-sm font-medium font-semibold">
+							className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-all text-sm font-semibold">
 							Request Offline Session
 						</button>
 					</div>
