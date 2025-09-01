@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ForgotPassword() {
 	const [role, setRole] = useState("");
@@ -15,23 +16,41 @@ export default function ForgotPassword() {
 		e.preventDefault();
 		if (!role || !email) return alert("Please fill all fields");
 
-		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_API_URL}/api/forgot/forgot-password`,
-			{
+		// Determine API base URL: prefer env, fallback to current origin
+		const apiBase =
+			process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
+			(typeof window !== "undefined" ? window.location.origin : "");
+
+		try {
+			const res = await fetch(`${apiBase}/api/forgot/forgot-password`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ role, email }),
-			}
-		);
+			});
 
-		const data = await res.json();
-		if (res.ok) {
-			localStorage.setItem("otp", data.otp);
-			localStorage.setItem("email", email);
-			localStorage.setItem("role", role);
-			setStep(2);
-		} else {
-			alert(data.error);
+			let data = {};
+			try {
+				data = await res.json();
+			} catch (_) {
+				// Non-JSON response; leave data as {}
+			}
+
+			if (res.ok) {
+				localStorage.setItem("otp", data.otp);
+				localStorage.setItem("email", email);
+				localStorage.setItem("role", role);
+				setStep(2);
+			} else {
+				alert(
+					data.error || data.message || "Request failed. Please try again."
+				);
+			}
+		} catch (err) {
+			// Network/CORS or invalid URL
+			alert(
+				err?.message ||
+					"Network error. Please check your connection or API URL."
+			);
 		}
 	};
 
