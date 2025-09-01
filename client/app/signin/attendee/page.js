@@ -187,7 +187,7 @@ export default function AttendeeSignInPage() {
 										whileTap={{ scale: 0.9 }}
 										onClick={() => setPasswordVisible(!passwordVisible)}
 										className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors duration-200">
-										{showPassword ? (
+										{passwordVisible ? (
 											<EyeOff className="w-5 h-5" />
 										) : (
 											<Eye className="w-5 h-5" />
