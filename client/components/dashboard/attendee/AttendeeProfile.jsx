@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-// Fetch the attendee profile from the API for the given username
+// Fetch the attendee profile for a given username
 const getAttendeeProfile = async (userName) => {
 	const response = await fetch(
 		`${process.env.NEXT_PUBLIC_API_URL}/api/attendees/${userName}`,
@@ -14,7 +14,7 @@ const getAttendeeProfile = async (userName) => {
 	return await response.json();
 };
 
-// Update the attendee profile for the given username with provided payload
+// Update the attendee profile for a given username with the provided payload
 const saveAttendeeProfile = async (userName, profile) => {
 	const response = await fetch(
 		`${process.env.NEXT_PUBLIC_API_URL}/api/attendees/${userName}`,
@@ -29,23 +29,46 @@ const saveAttendeeProfile = async (userName, profile) => {
 };
 
 const AttendeeProfile = ({ userName }) => {
+	// Alias for readability without changing the public prop name
+	const username = userName;
+
 	// UI state
 	const [editing, setEditing] = useState(false);
 	const [profile, setProfile] = useState({});
 	const [errorMessage, setErrorMessage] = useState(null);
 
+	// Reusable class names (kept identical to preserve UI)
+	const cardClass =
+		"p-8 rounded-2xl border border-slate-200/60 bg-white/80 backdrop-blur-lg hover:border-indigo-200/80 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 shadow-xl shadow-indigo-100/20";
+	const sectionTitleClass =
+		"text-2xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent mb-8";
+	const readOnlyBoxClass =
+		"bg-slate-50/50 p-4 rounded-xl border border-slate-200/40";
+	const readOnlyLabelClass = "text-sm font-medium text-slate-500";
+	const readOnlyValueClass = "mt-1 text-slate-900 font-medium";
+	const rowContainerClass =
+		"flex justify-between items-center py-4 px-2 hover:bg-slate-50/50 rounded-lg transition-colors";
+	const rowLabelClass = "text-sm font-medium text-slate-600";
+	const rowValueClass = "text-slate-900 font-medium";
+	const inputBaseClass =
+		"w-full px-4 py-3 border border-slate-200/60 rounded-xl bg-white/70 focus:ring-2 focus:ring-indigo-200/80 focus:border-indigo-300/50 transition-all outline-none";
+	const textInputClass = `${inputBaseClass} placeholder:text-slate-400/80`;
+	const selectClass = inputBaseClass;
+	const primaryButtonClass =
+		"w-full mt-6 px-6 py-3 bg-gradient-to-r from-indigo-600 to-teal-500 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-teal-600 transition-all transform hover:scale-[1.02] shadow-md hover:shadow-indigo-200/40 active:scale-95 text-sm";
+
 	// Load profile when username changes
 	useEffect(() => {
 		const loadProfileData = async () => {
 			try {
-				const data = await getAttendeeProfile(userName);
+				const data = await getAttendeeProfile(username);
 				setProfile(data);
 			} catch {
 				setErrorMessage("Error loading profile data");
 			}
 		};
-		if (userName) loadProfileData();
-	}, [userName]);
+		if (username) loadProfileData();
+	}, [username]);
 
 	// Controlled input handler
 	const handleInputChange = (e) => {
@@ -56,7 +79,7 @@ const AttendeeProfile = ({ userName }) => {
 	// Save changes to the API
 	const handleSaveChanges = async () => {
 		try {
-			const updated = await saveAttendeeProfile(userName, profile);
+			const updated = await saveAttendeeProfile(username, profile);
 			setProfile(updated.attendee);
 			setEditing(false);
 		} catch {
@@ -68,42 +91,27 @@ const AttendeeProfile = ({ userName }) => {
 
 	// Reusable row for read-only profile fields
 	const ProfileRowItem = ({ label, value }) => (
-		<div className="flex justify-between items-center py-4 px-2 hover:bg-slate-50/50 rounded-lg transition-colors">
-			<span className="text-sm font-medium text-slate-600">{label}</span>
-			<span className="text-slate-900 font-medium">{value || "-"}</span>
+		<div className={rowContainerClass}>
+			<span className={rowLabelClass}>{label}</span>
+			<span className={rowValueClass}>{value || "-"}</span>
 		</div>
 	);
 
 	return (
 		<div className="max-w-2xl mx-auto mt-10">
-			<div
-				className="p-8 rounded-2xl border border-slate-200/60
-					  bg-white/80 backdrop-blur-lg
-					  hover:border-indigo-200/80 hover:shadow-2xl
-					  transition-all duration-300 hover:-translate-y-2
-					  shadow-xl shadow-indigo-100/20">
-				<h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent mb-8">
-					Attendee Profile
-				</h3>
+			<div className={cardClass}>
+				<h3 className={sectionTitleClass}>Attendee Profile</h3>
 				{editing ? (
 					<div className="space-y-6">
 						{/* Read-only fields */}
 						<div className="space-y-4">
-							<div className="bg-slate-50/50 p-4 rounded-xl border border-slate-200/40">
-								<label className="text-sm font-medium text-slate-500">
-									Username
-								</label>
-								<p className="mt-1 text-slate-900 font-medium">
-									{profile.username}
-								</p>
+							<div className={readOnlyBoxClass}>
+								<label className={readOnlyLabelClass}>Username</label>
+								<p className={readOnlyValueClass}>{profile.username}</p>
 							</div>
-							<div className="bg-slate-50/50 p-4 rounded-xl border border-slate-200/40">
-								<label className="text-sm font-medium text-slate-500">
-									Email
-								</label>
-								<p className="mt-1 text-slate-900 font-medium">
-									{profile.email}
-								</p>
+							<div className={readOnlyBoxClass}>
+								<label className={readOnlyLabelClass}>Email</label>
+								<p className={readOnlyValueClass}>{profile.email}</p>
 							</div>
 						</div>
 
@@ -118,10 +126,7 @@ const AttendeeProfile = ({ userName }) => {
 									name="address"
 									value={profile.address || ""}
 									onChange={handleInputChange}
-									className="w-full px-4 py-3 border border-slate-200/60 rounded-xl 
-							bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
-							focus:border-indigo-300/50 transition-all outline-none
-							placeholder:text-slate-400/80"
+									className={textInputClass}
 									placeholder="Enter your address"
 								/>
 							</div>
@@ -135,10 +140,7 @@ const AttendeeProfile = ({ userName }) => {
 									name="phoneNumber"
 									value={profile.phoneNumber || ""}
 									onChange={handleInputChange}
-									className="w-full px-4 py-3 border border-slate-200/60 rounded-xl 
-							bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
-							focus:border-indigo-300/50 transition-all outline-none
-							placeholder:text-slate-400/80"
+									className={textInputClass}
 									placeholder="Enter phone number"
 								/>
 							</div>
@@ -153,9 +155,7 @@ const AttendeeProfile = ({ userName }) => {
 										name="age"
 										value={profile.age || ""}
 										onChange={handleInputChange}
-										className="w-full px-4 py-3 border border-slate-200/60 rounded-xl 
-							  bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
-							  focus:border-indigo-300/50 transition-all outline-none"
+										className={selectClass}
 									/>
 								</div>
 
@@ -167,9 +167,7 @@ const AttendeeProfile = ({ userName }) => {
 										name="sex"
 										value={profile.sex || ""}
 										onChange={handleInputChange}
-										className="w-full px-4 py-3 border border-slate-200/60 rounded-xl 
-							  bg-white/70 focus:ring-2 focus:ring-indigo-200/80 
-							  focus:border-indigo-300/50 transition-all outline-none">
+										className={selectClass}>
 										<option value="">Select Sex</option>
 										<option value="Male">Male</option>
 										<option value="Female">Female</option>
@@ -179,12 +177,7 @@ const AttendeeProfile = ({ userName }) => {
 							</div>
 						</div>
 
-						<button
-							onClick={handleSaveChanges}
-							className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-indigo-600 to-teal-500 text-white 
-						rounded-lg font-semibold hover:from-indigo-700 hover:to-teal-600 
-						transition-all transform hover:scale-[1.02] shadow-md hover:shadow-indigo-200/40
-						active:scale-95 text-sm">
+						<button onClick={handleSaveChanges} className={primaryButtonClass}>
 							Save Changes
 						</button>
 					</div>
@@ -204,10 +197,7 @@ const AttendeeProfile = ({ userName }) => {
 
 						<button
 							onClick={() => setEditing(true)}
-							className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-indigo-600 to-teal-500 text-white 
-						rounded-lg font-semibold hover:from-indigo-700 hover:to-teal-600 
-						transition-all transform hover:scale-[1.02] shadow-md hover:shadow-indigo-200/40
-						active:scale-95 text-sm">
+							className={primaryButtonClass}>
 							Edit Profile
 						</button>
 					</div>

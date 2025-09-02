@@ -8,6 +8,16 @@ export const Sessions = ({ email }) => {
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [errorMessage, setErrorMessage] = useState("");
 
+	// Class names collected for readability (no visual changes)
+	const headingClass =
+		"text-3xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent mb-8";
+	const filterBtnBase =
+		"py-2 px-4 rounded-full mr-2 focus-visible:outline-none focus-visible:ring-2 transition-colors text-white";
+	const filterAll = `${filterBtnBase} bg-blue-600 focus-visible:ring-blue-500`;
+	const filterPending = `${filterBtnBase} bg-rose-600 focus-visible:ring-rose-500`;
+	const filterApproved = `${filterBtnBase} bg-emerald-600 focus-visible:ring-emerald-500`;
+	const filterCompleted = `${filterBtnBase} bg-green-600 focus-visible:ring-green-500`;
+
 	// Fetch sessions (including approved sessions)
 	useEffect(() => {
 		if (!email) return; // Wait until email is available
@@ -49,30 +59,26 @@ export const Sessions = ({ email }) => {
 
 	return (
 		<section id="sessions" className="mb-12">
-			<h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent mb-8">
-				My Sessions
-			</h2>
+			<h2 className={headingClass}>My Sessions</h2>
 
 			{/* Filter buttons */}
 			<div className="mb-4 flex gap-2 flex-wrap">
-				<button
-					onClick={() => setStatusFilter("all")}
-					className="bg-blue-600 text-white py-2 px-4 rounded-full mr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-colors">
+				<button onClick={() => setStatusFilter("all")} className={filterAll}>
 					All Sessions
 				</button>
 				<button
 					onClick={() => setStatusFilter("pending")}
-					className="bg-rose-600 text-white py-2 px-4 rounded-full mr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 transition-colors">
+					className={filterPending}>
 					Pending Sessions
 				</button>
 				<button
 					onClick={() => setStatusFilter("approved")}
-					className="bg-emerald-600 text-white py-2 px-4 rounded-full mr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-colors">
+					className={filterApproved}>
 					Approved Sessions
 				</button>
 				<button
 					onClick={() => setStatusFilter("completed")}
-					className="bg-green-600 px-4 py-2 text-white rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 transition-colors">
+					className={filterCompleted}>
 					Completed Sessions
 				</button>
 			</div>

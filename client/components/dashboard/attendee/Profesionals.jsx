@@ -1,11 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ProfessionalCard } from "@/components/dashboard/attendee/ProfessionalCard"; // Importing the ProfessionalCard for displaying each professional
+// Card used to display each professional
+import { ProfessionalCard } from "@/components/dashboard/attendee/ProfessionalCard";
 
 export const Professionals = ({ email }) => {
 	const [professionals, setProfessionals] = useState([]);
-	const [message, setMessage] = useState(""); // State for success/error message
-	const [requestedSessions, setRequestedSessions] = useState({}); // Track session requests
+	const [message, setMessage] = useState(""); // success/error toast
+	const [requestedSessions, setRequestedSessions] = useState({}); // session requests per professional
 
 	// Fetch professionals
 	useEffect(() => {
@@ -25,7 +26,7 @@ export const Professionals = ({ email }) => {
 		fetchProfessionals();
 	}, []);
 
-	// Request session for a selected professional
+	// Request a session for the selected professional
 	const requestSession = async (professionalEmail, sessionType) => {
 		if (!email) return;
 		const sessionData = {
@@ -54,9 +55,9 @@ export const Professionals = ({ email }) => {
 				...prevState,
 				[professionalEmail]: sessionType,
 			}));
-			setMessage("Session requested successfully!"); // Success message
+			setMessage("Session requested successfully!");
 		} else {
-			setMessage("Failed to request session. Please try again."); // Error message
+			setMessage("Failed to request session. Please try again.");
 		}
 	};
 
