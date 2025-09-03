@@ -43,19 +43,6 @@ export const AttendeeDashboard = ({ userName, email }) => {
 				return <AIAssistant />;
 			case "journal":
 				return <Journal />;
-			// NOTE: The duplicate "journal" case below is unreachable; kept to avoid changing behavior.
-			case "journal":
-				return (
-					<div className="text-center py-12">
-						<h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-							Journal Feature
-						</h2>
-						<p className="text-slate-600 dark:text-slate-400">
-							Coming soon! This feature will allow you to write and reflect on
-							your thoughts.
-						</p>
-					</div>
-				);
 			default:
 				return <DashboardOverview role="attendee" userName={userName} />;
 		}

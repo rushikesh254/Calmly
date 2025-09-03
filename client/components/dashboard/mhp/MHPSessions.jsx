@@ -132,7 +132,7 @@ export const MHPSessions = ({ email }) => {
 									...session,
 									session_status: "approved",
 									session_date: scheduledDate,
-								}
+							  }
 							: session
 					)
 				);
