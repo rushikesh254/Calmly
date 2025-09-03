@@ -10,41 +10,50 @@ import { Heart, Eye, EyeOff, Lock, Mail, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function AttendeeSignInPage() {
+	// Local UI state
 	const [credentials, setCredentials] = useState({ email: "", password: "" });
 	const [errorMessage, setErrorMessage] = useState("");
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 
+	// Small helpers for readability (no behavior change)
+	const apiBase = process.env.NEXT_PUBLIC_API_URL;
+	const inputIconClass =
+		"absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400";
+	const eyeToggleClass =
+		"absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors duration-200";
+	const submitButtonClass =
+		"w-full bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg btn-hover-lift transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed h-12";
+
+	// Form field updates
 	const handleInputChange = (event) => {
 		setCredentials({ ...credentials, [event.target.name]: event.target.value });
 		if (errorMessage) setErrorMessage("");
 	};
 
+	// Submit credentials to API and route on success
 	const handleFormSubmit = async (event) => {
 		event.preventDefault();
 		setErrorMessage("");
 		setLoading(true);
 		try {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/attendees/signin`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(credentials),
-				}
-			);
+			const response = await fetch(`${apiBase}/api/attendees/signin`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(credentials),
+			});
 			if (!response.ok) {
-				const payload = await response.json().catch(() => ({}));
-				throw new Error(payload.message || "Invalid credentials");
+				const errorData = await response.json().catch(() => ({}));
+				throw new Error(errorData.message || "Invalid credentials");
 			}
-			const payload = await response.json();
+			const data = await response.json();
 			localStorage.setItem("userType", "attendee");
-			localStorage.setItem("token", payload.token);
-			localStorage.setItem("userName", payload.userName);
-			localStorage.setItem("userId", payload.userId);
-			localStorage.setItem("email", payload.email);
-			router.push(`/dashboard/attendee/${payload.userName}`);
+			localStorage.setItem("token", data.token);
+			localStorage.setItem("userName", data.userName);
+			localStorage.setItem("userId", data.userId);
+			localStorage.setItem("email", data.email);
+			router.push(`/dashboard/attendee/${data.userName}`);
 		} catch (errorObj) {
 			setErrorMessage(errorObj.message || "Sign in failed");
 		} finally {
@@ -52,6 +61,7 @@ export default function AttendeeSignInPage() {
 		}
 	};
 
+	// Framer Motion variants
 	const staggeredContainer = {
 		hidden: { opacity: 0, y: 20 },
 		visible: {
@@ -71,11 +81,13 @@ export default function AttendeeSignInPage() {
 
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-6 overflow-x-hidden">
+			{/* Decorative background glows */}
 			<div className="absolute inset-0 overflow-hidden">
 				<div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-teal-400/20 rounded-full blur-3xl"></div>
 				<div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
 			</div>
 
+			{/* Brand and theme toggle */}
 			<motion.div
 				initial={{ opacity: 0, y: -20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -102,6 +114,7 @@ export default function AttendeeSignInPage() {
 				<ThemeToggle />
 			</motion.div>
 
+			{/* Sign-in card */}
 			<motion.div
 				variants={staggeredContainer}
 				initial="hidden"
@@ -149,7 +162,7 @@ export default function AttendeeSignInPage() {
 									Email Address
 								</Label>
 								<div className="relative mt-2">
-									<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+									<Mail className={inputIconClass} />
 									<Input
 										id="email"
 										name="email"
@@ -170,7 +183,7 @@ export default function AttendeeSignInPage() {
 									Password
 								</Label>
 								<div className="relative mt-2">
-									<Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+									<Lock className={inputIconClass} />
 									<Input
 										id="password"
 										name="password"
@@ -186,7 +199,7 @@ export default function AttendeeSignInPage() {
 										whileHover={{ scale: 1.1 }}
 										whileTap={{ scale: 0.9 }}
 										onClick={() => setPasswordVisible(!passwordVisible)}
-										className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors duration-200">
+										className={eyeToggleClass}>
 										{passwordVisible ? (
 											<EyeOff className="w-5 h-5" />
 										) : (
@@ -202,7 +215,7 @@ export default function AttendeeSignInPage() {
 									disabled={loading}
 									whileHover={{ scale: 1.02 }}
 									whileTap={{ scale: 0.98 }}
-									className="w-full bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg btn-hover-lift transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed h-12">
+									className={submitButtonClass}>
 									{loading ? (
 										<div className="flex items-center justify-center space-x-2">
 											<div className="spinner"></div>
