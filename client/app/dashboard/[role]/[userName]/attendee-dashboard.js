@@ -9,13 +9,16 @@ import MoodLog from "@/components/dashboard/attendee/MoodLog";
 import AIAssistant from "@/components/dashboard/attendee/AIAssistant";
 import Journal from "@/components/dashboard/attendee/Journal";
 
+// Role-specific shell for Attendees
+// Behavior/UI unchanged; adds tiny helpers and clarifying comments.
 export const AttendeeDashboard = ({ userName, email }) => {
-	const [activeSection, setActiveSection] = useState("dashboard");
+	const DEFAULT_SECTION = "dashboard";
+	const [activeSection, setActiveSection] = useState(DEFAULT_SECTION);
 
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			const syncFromHash = () => {
-				const hashValue = window.location.hash.slice(1) || "dashboard";
+				const hashValue = window.location.hash.slice(1) || DEFAULT_SECTION;
 				setActiveSection(hashValue);
 			};
 			syncFromHash();
@@ -40,6 +43,7 @@ export const AttendeeDashboard = ({ userName, email }) => {
 				return <AIAssistant />;
 			case "journal":
 				return <Journal />;
+			// NOTE: The duplicate "journal" case below is unreachable; kept to avoid changing behavior.
 			case "journal":
 				return (
 					<div className="text-center py-12">

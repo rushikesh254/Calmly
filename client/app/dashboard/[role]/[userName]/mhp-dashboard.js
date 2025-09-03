@@ -9,21 +9,26 @@ import MHPProfile from "@/components/dashboard/mhp/MHPProfile";
 import AvailabilityManager from "@/components/dashboard/mhp/AvailabilityManager";
 import { Clients } from "@/components/dashboard/mhp/Clients";
 
+// Role-specific shell for Mental Health Professionals
+// Keeps UI/behavior unchanged; clarifies intent with constants and comments.
 export const MHPDashboard = ({ userName, email }) => {
-	const [activeSection, setActiveSection] = useState("dashboard");
+	const DEFAULT_SECTION = "dashboard"; // hash-less default
+	const [activeSection, setActiveSection] = useState(DEFAULT_SECTION);
 
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			const syncFromHash = () => {
-				const hashValue = window.location.hash.slice(1) || "dashboard";
+				const hashValue = window.location.hash.slice(1) || DEFAULT_SECTION;
 				setActiveSection(hashValue);
 			};
+			// Initialize and subscribe for hash-based navigation
 			syncFromHash();
 			window.addEventListener("hashchange", syncFromHash);
 			return () => window.removeEventListener("hashchange", syncFromHash);
 		}
 	}, []);
 
+	// Centralized section switch; keeps individual pages decoupled
 	const renderContent = () => {
 		switch (activeSection) {
 			case "dashboard":
