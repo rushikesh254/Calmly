@@ -16,10 +16,16 @@ import AvailabilityManager from "./mhp/AvailabilityManager";
 
 export const DashboardLayout = ({ role, userName, email }) => {
 	const router = useRouter();
-	const [activeSection, setActiveSection] = useState(
-		role === "attendee" ? "resources" : "sessions"
-	);
 
+	// Convenience flags for readability (no behavior change)
+	const isAttendee = role === "attendee";
+	const isMHP = role === "mhp";
+
+	// Initial section: attendees land on Resources, MHPs on Sessions
+	const initialSection = isAttendee ? "resources" : "sessions";
+	const [activeSection, setActiveSection] = useState(initialSection);
+
+	// Restore section from hash if present (client-only)
 	useEffect(() => {
 		if (typeof window !== "undefined" && window.location.hash) {
 			const hashValue = window.location.hash.slice(1);
@@ -27,6 +33,7 @@ export const DashboardLayout = ({ role, userName, email }) => {
 		}
 	}, []);
 
+	// Navigation helpers
 	const handleSectionChange = (e, section) => {
 		e.preventDefault();
 		setActiveSection(section);
@@ -38,6 +45,7 @@ export const DashboardLayout = ({ role, userName, email }) => {
 		router.push("/signin");
 	};
 
+	// Sidebar navigation items (icons unchanged)
 	const navItems = {
 		attendee: [
 			{
@@ -243,17 +251,32 @@ export const DashboardLayout = ({ role, userName, email }) => {
 		],
 	};
 
+	// Reusable class strings for a cleaner JSX (visuals unchanged)
+	const pageClass =
+		"flex min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-teal-75";
+	const sidebarClass =
+		"w-64 bg-white/90 backdrop-blur-lg border-r border-slate-200/60 p-6 sticky top-0 h-dvh shadow-xl";
+	const sidebarHeaderClass = "mb-8 p-4 bg-indigo-50/50 rounded-xl";
+	const userNameClass =
+		"text-2xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent";
+	const roleClass = "text-sm text-slate-600 capitalize mt-1 font-medium";
+	const baseNavBtnClass =
+		"w-full flex items-center p-3 text-sm font-medium rounded-xl transition-all duration-200";
+	const activeNavBtnClass =
+		"bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg";
+	const inactiveNavBtnClass =
+		"text-slate-600 hover:bg-indigo-50/50 hover:translate-x-2";
+	const mainWrapperClass = "flex-1 p-8";
+	const contentCardClass =
+		"max-w-7xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-8 shadow-lg";
+
 	return (
-		<div className="flex min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-teal-75">
+		<div className={pageClass}>
 			{/* Sidebar */}
-			<aside className="w-64 bg-white/90 backdrop-blur-lg border-r border-slate-200/60 p-6 sticky top-0 h-dvh shadow-xl">
-				<div className="mb-8 p-4 bg-indigo-50/50 rounded-xl">
-					<h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent">
-						{userName}
-					</h2>
-					<p className="text-sm text-slate-600 capitalize mt-1 font-medium">
-						{role} Dashboard
-					</p>
+			<aside className={sidebarClass}>
+				<div className={sidebarHeaderClass}>
+					<h2 className={userNameClass}>{userName}</h2>
+					<p className={roleClass}>{role} Dashboard</p>
 				</div>
 				<nav>
 					<ul className="space-y-1">
@@ -265,10 +288,10 @@ export const DashboardLayout = ({ role, userName, email }) => {
 											? handleLogout()
 											: handleSectionChange(e, item.section)
 									}
-									className={`w-full flex items-center p-3 text-sm font-medium rounded-xl transition-all duration-200 ${
+									className={`${baseNavBtnClass} ${
 										activeSection === item.section
-											? "bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg"
-											: "text-slate-600 hover:bg-indigo-50/50 hover:translate-x-2"
+											? activeNavBtnClass
+											: inactiveNavBtnClass
 									}`}>
 									<span
 										className={`mr-3 ${
@@ -302,43 +325,37 @@ export const DashboardLayout = ({ role, userName, email }) => {
 			</aside>
 
 			{/* Main Content */}
-			<main className="flex-1 p-8">
-				<div className="max-w-7xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-8 shadow-lg">
-					{activeSection === "resources" && role === "attendee" && (
-						<AttendeeResources />
-					)}
-					{activeSection === "profile" && role === "attendee" && (
+			<main className={mainWrapperClass}>
+				<div className={contentCardClass}>
+					{activeSection === "resources" && isAttendee && <AttendeeResources />}
+					{activeSection === "profile" && isAttendee && (
 						<AttendeeProfile userName={userName} />
 					)}
-					{activeSection === "sessions" && role === "attendee" && (
+					{activeSection === "sessions" && isAttendee && (
 						<Sessions email={email} />
 					)}
-					{activeSection === "professionals" && role === "attendee" && (
+					{activeSection === "professionals" && isAttendee && (
 						<Professionals email={email} />
 					)}
-					{activeSection === "moodtracker" && role === "attendee" && (
-						<MoodLog />
-					)}
-					{activeSection === "sessions" && role === "mhp" && (
+					{activeSection === "moodtracker" && isAttendee && <MoodLog />}
+					{activeSection === "sessions" && isMHP && (
 						<MHPSessions email={email} />
 					)}
-					{activeSection === "uploadresource" && role === "mhp" && (
+					{activeSection === "uploadresource" && isMHP && (
 						<MHPResourcesManagement userName={userName} email={email} />
 					)}
-					{activeSection === "myresources" && role === "mhp" && (
+					{activeSection === "myresources" && isMHP && (
 						<MyResources email={email} />
 					)}
-					{activeSection === "profile" && role === "mhp" && (
+					{activeSection === "profile" && isMHP && (
 						<MHPProfile userName={userName} />
 					)}
-					{activeSection === "availability" && role === "mhp" && (
-						<AvailabilityManager />
-					)}
+					{activeSection === "availability" && isMHP && <AvailabilityManager />}
 				</div>
 			</main>
 
 			{/* Chatbot Component */}
-			{role === "attendee" && <Chatbot />}
+			{isAttendee && <Chatbot />}
 		</div>
 	);
 };
