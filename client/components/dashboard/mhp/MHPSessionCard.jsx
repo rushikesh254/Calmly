@@ -16,22 +16,46 @@ export const MHPSessionCard = ({
 	onComplete,
 	onProvideRecommendation,
 }) => {
+	// Status flags derived from props (no behavior change)
 	const isPaymentCompleted = paymentStatus === "completed";
 	const isPaymentOffline = sessionType === "offline";
 	const isApproved = sessionStatus === "approved";
 	const isDeclined = sessionStatus === "declined";
 	const isCompleted = sessionStatus === "completed";
 	const isOffline = sessionType === "offline";
+
+	// Dates and quick comparisons
 	const sessionDate = new Date(datetime);
 	const today = new Date();
 	const isToday = sessionDate.toDateString() === today.toDateString();
 	const isPastSession = sessionDate < today && !isToday;
+
+	// Local UI state
 	const [inputRecommendation, setInputRecommendation] = useState("");
 	const [showFullRecommendation, setShowFullRecommendation] = useState(false);
 	const [isEditingRecommendation, setIsEditingRecommendation] = useState(false);
 	const [editedRecommendation, setEditedRecommendation] = useState("");
 	const [showError, setShowError] = useState(false);
 
+	// Precomputed formatted date strings for readability (same formats as before)
+	const scheduledAtString = sessionDate.toLocaleString("en-US", {
+		weekday: "short",
+		month: "short",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+		year: "numeric",
+	});
+	const detailsDateString = sessionDate.toLocaleString("en-US", {
+		weekday: "short",
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	});
+
+	// Handlers
 	const handleRecommendationChange = (e) => {
 		setInputRecommendation(e.target.value);
 	};
@@ -60,6 +84,7 @@ export const MHPSessionCard = ({
 		setEditedRecommendation("");
 	};
 
+	// Render
 	return (
 		<div className="bg-white rounded-xl shadow-lg p-6 mb-4 transition-all duration-200 hover:shadow-xl border border-gray-100">
 			{/* Session Schedule Banner */}
@@ -79,15 +104,7 @@ export const MHPSessionCard = ({
 									clipRule="evenodd"
 								/>
 							</svg>
-							Session Scheduled at{" "}
-							{sessionDate.toLocaleString("en-US", {
-								weekday: "short",
-								month: "short",
-								day: "numeric",
-								hour: "2-digit",
-								minute: "2-digit",
-								year: "numeric",
-							})}
+							Session Scheduled at {scheduledAtString}
 						</p>
 					</div>
 				)}
@@ -122,14 +139,7 @@ export const MHPSessionCard = ({
 								/>
 							</svg>
 
-							{new Date(datetime).toLocaleString("en-US", {
-								weekday: "short",
-								year: "numeric",
-								month: "long",
-								day: "numeric",
-								hour: "2-digit",
-								minute: "2-digit",
-							})}
+							{detailsDateString}
 						</p>
 						<p className="text-sm text-gray-600 flex items-center gap-2">
 							<svg
@@ -193,7 +203,7 @@ export const MHPSessionCard = ({
 				<div className="flex gap-2 mt-4 justify-end">
 					<button
 						onClick={onApprove}
-						className="flex items-center gap-1 py-2 px-3 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg transition-all text-sm font-medium shadow-sm font-semibold">
+						className="flex items-center gap-1 py-2 px-3 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg transition-all text-sm shadow-sm font-semibold">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="h-4 w-4"
@@ -209,7 +219,7 @@ export const MHPSessionCard = ({
 					</button>
 					<button
 						onClick={onDecline}
-						className="flex items-center gap-1 py-2 px-3 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition-all text-sm font-medium shadow-sm font-semibold">
+						className="flex items-center gap-1 py-2 px-3 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition-all text-sm shadow-sm font-semibold">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="h-4 w-4"
