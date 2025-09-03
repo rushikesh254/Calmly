@@ -1,6 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
+// Keep constants at the top for easier maintenance
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+const ATTENDEES_ENDPOINT = `${API_BASE}/api/attendees/all`;
+
 export const AttendeeInformation = () => {
 	const [attendees, setAttendees] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -10,9 +14,7 @@ export const AttendeeInformation = () => {
 	useEffect(() => {
 		const fetchAttendees = async () => {
 			try {
-				const response = await fetch(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/attendees/all`
-				);
+				const response = await fetch(ATTENDEES_ENDPOINT);
 				if (!response.ok) throw new Error("Failed to fetch attendees");
 				const data = await response.json();
 				setAttendees(data);
@@ -106,46 +108,11 @@ export const AttendeeInformation = () => {
 				) : (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 						{attendees.map((attendee) => (
-							<div
+							<AttendeeCard
 								key={attendee.email}
-								className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-slate-800 overflow-hidden">
-								<div className="p-6 pb-4 bg-gradient-to-b from-indigo-50 to-white dark:from-slate-800 dark:to-slate-900">
-									<div className="flex items-start justify-between mb-4">
-										<div>
-											<h3 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-												{attendee.username}
-											</h3>
-											<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-												{attendee.email}
-											</p>
-										</div>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											className="h-6 w-6 text-indigo-400 dark:text-indigo-300"
-											viewBox="0 0 20 20"
-											fill="currentColor">
-											<path
-												fillRule="evenodd"
-												d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-												clipRule="evenodd"
-											/>
-										</svg>
-									</div>
-
-									<div className="space-y-2">
-										<InfoItem label="Age" value={attendee.age} />
-										<InfoItem label="Gender" value={attendee.sex} />
-									</div>
-								</div>
-
-								<div className="p-6 pt-4 border-t border-gray-100 dark:border-slate-800">
-									<button
-										onClick={() => setSelectedAttendee(attendee)}
-										className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-600 dark:bg-indigo-950/30 dark:hover:bg-indigo-900/40 dark:text-indigo-300 transition-all text-sm font-semibold">
-										View Full Profile
-									</button>
-								</div>
-							</div>
+								attendee={attendee}
+								onView={() => setSelectedAttendee(attendee)}
+							/>
 						))}
 					</div>
 				)}
@@ -159,5 +126,45 @@ const InfoItem = ({ label, value }) => (
 	<div className="flex items-center text-sm text-gray-600">
 		<span className="font-medium text-gray-500 mr-2">{label}:</span>
 		<span className="text-gray-700">{value || "N/A"}</span>
+	</div>
+);
+
+// Presentational card extracted for clarity; markup and classes remain unchanged
+const AttendeeCard = ({ attendee, onView }) => (
+	<div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-slate-800 overflow-hidden">
+		<div className="p-6 pb-4 bg-gradient-to-b from-indigo-50 to-white dark:from-slate-800 dark:to-slate-900">
+			<div className="flex items-start justify-between mb-4">
+				<div>
+					<h3 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+						{attendee.username}
+					</h3>
+					<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+						{attendee.email}
+					</p>
+				</div>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					className="h-6 w-6 text-indigo-400 dark:text-indigo-300"
+					viewBox="0 0 20 20"
+					fill="currentColor">
+					<path
+						fillRule="evenodd"
+						d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+						clipRule="evenodd"
+					/>
+				</svg>
+			</div>
+			<div className="space-y-2">
+				<InfoItem label="Age" value={attendee.age} />
+				<InfoItem label="Gender" value={attendee.sex} />
+			</div>
+		</div>
+		<div className="p-6 pt-4 border-t border-gray-100 dark:border-slate-800">
+			<button
+				onClick={onView}
+				className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-600 dark:bg-indigo-950/30 dark:hover:bg-indigo-900/40 dark:text-indigo-300 transition-all text-sm font-semibold">
+				View Full Profile
+			</button>
+		</div>
 	</div>
 );

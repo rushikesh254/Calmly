@@ -1,21 +1,30 @@
 "use client";
 import { useEffect, useState } from "react";
 
+// Small helpers keep the render clean and focused
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+const ADMIN_STATS_ENDPOINT = `${API_BASE}/api/admin/manage/stats`;
+const getToken = () =>
+	typeof window === "undefined" ? null : localStorage.getItem("accessToken");
+const withAuth = (token) => (token ? { Authorization: `Bearer ${token}` } : {});
+
 export const AnalyticsCards = () => {
-	const [stats, setStats] = useState(null);
+	const [stats, setStats] = useState(null); // { users, attendees, mhps, sessions, moodLogs }
 	const [error, setError] = useState("");
 
 	useEffect(() => {
 		const fetchStats = async () => {
 			try {
-				const token = localStorage.getItem("accessToken");
-				const res = await fetch(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/admin/manage/stats`,
-					{ headers: { Authorization: `Bearer ${token}` } }
-				);
+				const token = getToken();
+				const res = await fetch(ADMIN_STATS_ENDPOINT, {
+					headers: withAuth(token),
+				});
 				const data = await res.json();
-				if (res.ok) setStats(data.totals);
-				else setError(data.error || "Failed");
+				if (res.ok && data?.totals) {
+					setStats(data.totals);
+				} else {
+					setError(data?.error || "Failed");
+				}
 			} catch {
 				setError("Network error");
 			}
@@ -23,6 +32,7 @@ export const AnalyticsCards = () => {
 		fetchStats();
 	}, []);
 
+	// Shape the display list in one place; rendering stays dumb and predictable
 	const items = stats
 		? [
 				{ label: "Total Users", value: stats.users },
