@@ -8,6 +8,15 @@ import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
+// Small UI constants keep markup tidy without changing styles
+const INPUT_STYLES =
+	"mt-2 bg-white/5 border-white/20 text-gray-100 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/50 transition-all duration-300 placeholder:text-gray-400";
+const TITLE = "Admin Portal";
+const SUBTITLE = "Enter your credentials to access admin portal";
+
+// Contract
+// Props: email, password, error, handleEmailChange, handlePasswordChange, handleSubmit
+// Behavior: wraps handleSubmit with a local loading state and shows an inline error alert
 export const AdminLoginForm = ({
 	email,
 	password,
@@ -18,6 +27,7 @@ export const AdminLoginForm = ({
 }) => {
 	const [isLoading, setIsLoading] = useState(false);
 
+	// Keep the parent API intact: delegate to handleSubmit and control loading locally
 	const handleFormSubmit = async (e) => {
 		e.preventDefault();
 		setIsLoading(true);
@@ -33,11 +43,9 @@ export const AdminLoginForm = ({
 			<Card className="group w-full max-w-md p-8 shadow-2xl transition-all duration-500 hover:shadow-3xl backdrop-blur-lg bg-white/10 border border-white/20 hover:bg-white/15">
 				<div className="flex flex-col space-y-2 text-center mb-8">
 					<h1 className="text-4xl font-bold tracking-tighter bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-						Admin Portal
+						{TITLE}
 					</h1>
-					<p className="text-sm text-gray-300/90">
-						Enter your credentials to access admin portal
-					</p>
+					<p className="text-sm text-gray-300/90">{SUBTITLE}</p>
 				</div>
 
 				<form onSubmit={handleFormSubmit} className="space-y-6">
@@ -52,7 +60,7 @@ export const AdminLoginForm = ({
 								placeholder="admin@example.com"
 								value={email}
 								onChange={handleEmailChange}
-								className="mt-2 bg-white/5 border-white/20 text-gray-100 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/50 transition-all duration-300 placeholder:text-gray-400"
+								className={INPUT_STYLES}
 								disabled={isLoading}
 							/>
 						</div>
@@ -67,7 +75,7 @@ export const AdminLoginForm = ({
 								placeholder="••••••••"
 								value={password}
 								onChange={handlePasswordChange}
-								className="mt-2 bg-white/5 border-white/20 text-gray-100 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/50 transition-all duration-300 placeholder:text-gray-400"
+								className={INPUT_STYLES}
 								disabled={isLoading}
 							/>
 						</div>
