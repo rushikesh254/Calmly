@@ -78,6 +78,23 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
+// Constants and tiny helpers
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+const SESSIONS_ENDPOINT = `${API_BASE}/api/sessions/all`;
+const getToken = () =>
+	(typeof window !== "undefined" &&
+		(localStorage.getItem("accessToken") || localStorage.getItem("token"))) ||
+	null;
+const withAuth = (token) => (token ? { Authorization: `Bearer ${token}` } : {});
+const statusBadgeClass = (status) =>
+	`px-3 py-1 rounded-full text-xs font-medium ${
+		status === "completed"
+			? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+			: status === "pending"
+			? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
+			: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+	}`;
+
 export const SessionsInformation = () => {
 	const [sessions, setSessions] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -88,19 +105,13 @@ export const SessionsInformation = () => {
 		const fetchSessions = async () => {
 			try {
 				// Admin route is protected: requires Authorization with an admin JWT
-				const token =
-					localStorage.getItem("accessToken") || localStorage.getItem("token");
+				const token = getToken();
 				if (!token) {
 					throw new Error("Not authenticated. Please sign in as admin.");
 				}
-				const response = await fetch(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/sessions/all`,
-					{
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					}
-				);
+				const response = await fetch(SESSIONS_ENDPOINT, {
+					headers: withAuth(token),
+				});
 				if (!response.ok) throw new Error("Failed to fetch sessions");
 				const data = await response.json();
 				setSessions(data);
@@ -251,14 +262,7 @@ export const SessionsInformation = () => {
 												{new Date(session.session_date).toLocaleDateString()}
 											</p>
 										</div>
-										<span
-											className={`px-3 py-1 rounded-full text-xs font-medium ${
-												session.session_status === "completed"
-													? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-													: session.session_status === "pending"
-														? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
-														: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
-											}`}>
+										<span className={statusBadgeClass(session.session_status)}>
 											{session.session_status}
 										</span>
 									</div>
