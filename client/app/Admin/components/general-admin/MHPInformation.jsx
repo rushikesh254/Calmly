@@ -2,6 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 
+// Keep constants at the top for clarity
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+const MHP_ENDPOINT = `${API_BASE}/api/professionals`;
+
 export const MHPInformation = () => {
 	const [mhpList, setMhpList] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -11,9 +15,7 @@ export const MHPInformation = () => {
 	useEffect(() => {
 		const fetchMHPs = async () => {
 			try {
-				const response = await fetch(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/professionals`
-				);
+				const response = await fetch(MHP_ENDPOINT);
 				if (!response.ok) throw new Error("Failed to fetch MHP information");
 				const data = await response.json();
 				setMhpList(data);
