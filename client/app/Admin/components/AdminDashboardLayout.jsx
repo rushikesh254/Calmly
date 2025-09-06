@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-// import { DashboardContent } from "../components/general-admin/Dashboard";
-import { AttendeeInformation } from "../components/general-admin/AttendeeInformation";
-import { MHPInformation } from "../components/general-admin/MHPInformation";
-import { SessionsInformation } from "../components/general-admin/SessionsInformation";
-// import { MHADashboard } from "./mh-admin/Dashboard";
+import { AttendeeInformation } from "./general-admin/AttendeeInformation";
+import { MHPInformation } from "./general-admin/MHPInformation";
+import { SessionsInformation } from "./general-admin/SessionsInformation";
 import { Resources } from "./mh-admin/Resources";
 import { MHPRequest } from "./mh-admin/MHPRequests";
 import { ViewResources } from "./mh-admin/ViewResources";
@@ -173,27 +171,61 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 	const router = useRouter();
 	const [activeSection, setActiveSection] = useState(getInitialSection(role));
 
+	// Initialize section from URL hash (supports deep linking) – runs only once.
 	useEffect(() => {
 		if (typeof window !== "undefined" && window.location.hash) {
 			const hashValue = window.location.hash.slice(1);
-			setActiveSection(hashValue);
+			if (hashValue) setActiveSection(hashValue);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	// Keep hash routing for deep links consistent with existing behavior
-	const handleSectionChange = (e, section) => {
-		e.preventDefault();
-		setActiveSection(section);
-		router.push(`/admin/dashboard/${role}/${userName}/#${section}`);
-	};
+	const handleSectionChange = useCallback(
+		(e, section) => {
+			e.preventDefault();
+			setActiveSection(section);
+			router.push(`/admin/dashboard/${role}/${userName}/#${section}`);
+		},
+		[router, role, userName]
+	);
 
-	const handleLogout = () => {
-		localStorage.removeItem("accessToken");
+	const handleLogout = useCallback(() => {
+		try { localStorage.removeItem("accessToken"); } catch {}
 		router.push("/admin");
-	};
+	}, [router]);
 
-	// Use extracted NAV_ITEMS for clarity
+	// Encapsulate decision logic for main panel content – easier to scan & extend.
+	const mainContent = useMemo(() => {
+		if (role === "general-admin") {
+			switch (activeSection) {
+				case SECTION.ANALYTICS_USERS:
+					return <div className="space-y-8">{children}</div>;
+				case SECTION.ATTENDEES:
+					return <AttendeeInformation userName={userName} />;
+				case SECTION.MHP:
+					return <MHPInformation userName={userName} />;
+				case SECTION.SESSIONS:
+					return <SessionsInformation userName={userName} />;
+				default:
+					return null; // Fallback – preserves current behavior (renders nothing)
+			}
+		}
+		if (role === "mh-admin") {
+			switch (activeSection) {
+				case SECTION.MHP_REQUEST:
+					return <MHPRequest />;
+				case SECTION.RESOURCE_UPLOAD:
+					return <Resources userName={userName} email={email} />;
+				case SECTION.RESOURCES_SHOW:
+					return <ViewResources />;
+				default:
+					return null;
+			}
+		}
+		return null;
+	}, [role, activeSection, children, userName, email]);
+
+	const navItems = NAV_ITEMS[role] || [];
 
 	return (
 		<div className="flex min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 overflow-x-hidden">
@@ -214,46 +246,43 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 				</div>
 				<nav>
 					<ul className="space-y-1">
-						{NAV_ITEMS[role].map((item) => (
-							<li key={item.section}>
-								<button
-									onClick={(e) =>
-										item.section === "logout"
-											? handleLogout()
-											: handleSectionChange(e, item.section)
-									}
-									className={`w-full flex items-center p-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-										activeSection === item.section
-											? "bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg"
-											: "text-slate-600 hover:bg-indigo-50/50 hover:translate-x-2"
-									}`}>
-									<span
-										className={`mr-3 ${
-											activeSection === item.section
-												? "text-white"
-												: "text-indigo-400"
-										}`}>
-										{item.icon}
-									</span>
-									<span className="text-left flex-1">{item.name}</span>
-									{item.section === "logout" && (
-										<span className="ml-auto text-red-200 hover:text-red-100">
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												className="h-4 w-4"
-												viewBox="0 0 20 20"
-												fill="currentColor">
-												<path
-													fillRule="evenodd"
-													d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
-													clipRule="evenodd"
-												/>
-											</svg>
+						{navItems.map((item) => {
+							const isActive = activeSection === item.section;
+							const isLogout = item.section === SECTION.LOGOUT;
+							return (
+								<li key={item.section}>
+									<button
+										onClick={(e) => (isLogout ? handleLogout() : handleSectionChange(e, item.section))}
+										className={`w-full flex items-center p-3 text-sm font-medium rounded-xl transition-all duration-200 ${
+											isActive
+												? "bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg"
+												: "text-slate-600 hover:bg-indigo-50/50 hover:translate-x-2"
+										}`}
+									>
+										<span className={`mr-3 ${isActive ? "text-white" : "text-indigo-400"}`}>
+											{item.icon}
 										</span>
-									)}
-								</button>
-							</li>
-						))}
+										<span className="text-left flex-1">{item.name}</span>
+										{isLogout && (
+											<span className="ml-auto text-red-200 hover:text-red-100">
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													className="h-4 w-4"
+													viewBox="0 0 20 20"
+													fill="currentColor"
+												>
+													<path
+														fillRule="evenodd"
+														d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+														clipRule="evenodd"
+													/>
+												</svg>
+											</span>
+										)}
+									</button>
+								</li>
+							);
+						})}
 					</ul>
 				</nav>
 			</aside>
@@ -264,32 +293,7 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 					<div className="flex items-center justify-end mb-4">
 						<ThemeToggle />
 					</div>
-					{/* {role === "general-admin" && activeSection === "dashboard" && (
-						<DashboardContent userName={userName} />
-					)} */}
-					{role === "general-admin" &&
-						activeSection === SECTION.ANALYTICS_USERS && (
-							<div className="space-y-8">{children}</div>
-						)}
-					{role === "general-admin" && activeSection === SECTION.ATTENDEES && (
-						<AttendeeInformation userName={userName} />
-					)}
-					{role === "general-admin" && activeSection === SECTION.MHP && (
-						<MHPInformation userName={userName} />
-					)}
-					{role === "general-admin" && activeSection === SECTION.SESSIONS && (
-						<SessionsInformation userName={userName} />
-					)}
-					{/* {role === "mh-admin" && activeSection === "dashboard" && <MHADashboard userName={userName}/>} */}
-					{role === "mh-admin" && activeSection === SECTION.MHP_REQUEST && (
-						<MHPRequest />
-					)}
-					{role === "mh-admin" && activeSection === SECTION.RESOURCE_UPLOAD && (
-						<Resources userName={userName} email={email} />
-					)}
-					{role === "mh-admin" && activeSection === SECTION.RESOURCES_SHOW && (
-						<ViewResources />
-					)}
+					{mainContent}
 				</div>
 			</main>
 		</div>

@@ -1,42 +1,56 @@
 "use client";
+
+// Human-readable refactor: logic & UI unchanged.
+// Responsibilities:
+// 1. Read stored email for display.
+// 2. Validate JWT + role + username; redirect to /admin if invalid.
+// 3. Show loading placeholder until verified.
+
 import { useEffect, useState } from "react";
-import React from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { MHAdminDashboard } from "./mh-admin-dashboard";
 
 export default function MHAdminDashboardPage({ params }) {
-	const router = useRouter();
 	const { userName } = params;
+	const router = useRouter();
+
 	const [authVerified, setAuthVerified] = useState(false);
 	const [email, setEmail] = useState(null);
 
+	// Load email (non-blocking, independent of auth)
 	useEffect(() => {
-		// Check if localStorage is available (running in the browser)
-		if (typeof window !== "undefined" && window.localStorage) {
-			const storedEmail = localStorage.getItem("email");
-			// console.log("Email: ", storedEmail);
+		try {
+			const storedEmail = typeof window !== "undefined" ? localStorage.getItem("email") : null;
 			setEmail(storedEmail);
+		} catch {
+			// Ignore; not critical for rendering dashboard.
 		}
 	}, []);
 
+	// Verify token + role + username
 	useEffect(() => {
-		const token = localStorage.getItem("accessToken");
-		const storedUserName = localStorage.getItem("userName");
-
-		if (!token) {
-			router.push("/admin");
-			return;
-		}
 		try {
-			const decoded = jwtDecode(token);
-			if (decoded.role !== "mh-admin" || storedUserName !== userName) {
+			const token = localStorage.getItem("accessToken");
+			const storedUserName = localStorage.getItem("userName");
+
+			if (!token) {
 				router.push("/admin");
-			} else {
+				return;
+			}
+
+			const decoded = jwtDecode(token);
+			const roleMatches = decoded?.role === "mh-admin";
+			const userMatches = storedUserName === userName;
+
+			if (roleMatches && userMatches) {
 				setAuthVerified(true);
+			} else {
+				router.push("/admin");
 			}
 		} catch {
-			localStorage.removeItem("accessToken");
+			// Corrupt / invalid token scenario
+			try { localStorage.removeItem("accessToken"); } catch {}
 			router.push("/admin");
 		}
 	}, [router, userName]);
