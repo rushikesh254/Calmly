@@ -1,7 +1,3 @@
-/**
- * Theme Provider for Calmly Mental Health Platform
- * @author Rushikesh Bodke
- */
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";

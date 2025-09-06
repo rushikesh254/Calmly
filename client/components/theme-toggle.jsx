@@ -1,7 +1,3 @@
-/**
- * Theme Toggle Component for Calmly Mental Health Platform
- * @author Rushikesh Bodke
- */
 "use client";
 
 import { Moon, Sun } from "lucide-react";
