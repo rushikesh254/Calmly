@@ -1,7 +1,13 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 
+/**
+ * Displays previously created resources (articles & videos) with filtering.
+ * Allows deletion (with confirmation) and full-article modal view.
+ * UI structure and classes preserved; only code clarity improved.
+ */
 export const ViewResources = () => {
+	// -------------------- State --------------------
 	const [resources, setResources] = useState([]);
 	const [selectedType, setSelectedType] = useState("all");
 	const [categoryFilter, setCategoryFilter] = useState("");
@@ -31,14 +37,15 @@ export const ViewResources = () => {
 			try {
 				let url = `${process.env.NEXT_PUBLIC_API_URL}/api/resources?`;
 				if (selectedType !== "all") url += `type=${selectedType}&`;
-				if (categoryFilter)
-					url += `category=${encodeURIComponent(categoryFilter)}`;
+				if (categoryFilter) url += `category=${encodeURIComponent(categoryFilter)}`;
 
 				const response = await fetch(url);
+				if (!response.ok) return; // silent fail keeps UX stable
 				const data = await response.json();
 				setResources(data);
-			} catch {
-				// Swallow error; UI remains usable and can show empty state
+			} catch (err) {
+				// Log for debugging while keeping UI minimal
+				console.error("Failed to fetch resources", err);
 			}
 		};
 		fetchResources();
@@ -63,24 +70,20 @@ export const ViewResources = () => {
 
 			const result = await response.json();
 			if (response.ok) {
-				setResources(
-					resources.filter((resource) => resource._id !== deletingResourceId)
-				);
+				setResources(resources.filter((resource) => resource._id !== deletingResourceId));
 				setDeletingResourceId(null);
 			} else {
 				alert(result.message || "Failed to delete resource.");
 				setDeletingResourceId(null);
 			}
-		} catch {
+		} catch (err) {
 			alert("An error occurred while deleting.");
+			console.error("Delete error", err);
 			setDeletingResourceId(null);
 		}
 	};
 
-	const filteredResources = resources.filter((resource) => {
-		if (selectedType === "all") return true;
-		return resource.type === selectedType;
-	});
+	const filteredResources = resources.filter((resource) => (selectedType === "all" ? true : resource.type === selectedType));
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
