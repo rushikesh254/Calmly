@@ -178,6 +178,7 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 			const hashValue = window.location.hash.slice(1);
 			setActiveSection(hashValue);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	// Keep hash routing for deep links consistent with existing behavior
@@ -264,8 +265,8 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 						<ThemeToggle />
 					</div>
 					{/* {role === "general-admin" && activeSection === "dashboard" && (
-            <DashboardContent userName={userName} />
-          )} */}
+						<DashboardContent userName={userName} />
+					)} */}
 					{role === "general-admin" &&
 						activeSection === SECTION.ANALYTICS_USERS && (
 							<div className="space-y-8">{children}</div>
