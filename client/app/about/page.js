@@ -1,8 +1,4 @@
-/**
- * About Page for Calmly Mental Health Platform
- * Presents mission, team, values, and contact CTA.
- * Author: Rushikesh Bodke
- */
+// About page: mission, team, values, CTA.
 import Link from "next/link";
 import { Heart, Users, Target, Award, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +8,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export default function About() {
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-			{/* Header */}
+			
 			<header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-700/60">
 				<nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex justify-between items-center h-20">
@@ -48,7 +44,7 @@ export default function About() {
 				</nav>
 			</header>
 
-			{/* Main Content */}
+			
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<div className="text-center mb-16">
 					<div className="w-20 h-20 bg-gradient-to-r from-indigo-600 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -102,7 +98,7 @@ export default function About() {
 					</Card>
 				</div>
 
-				{/* Values Section */}
+				
 				<div className="mb-16">
 					<h3 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
 						Our Core Values
@@ -161,7 +157,7 @@ export default function About() {
 				</div>
 			</main>
 
-			{/* Footer */}
+			
 			<footer className="border-t border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md mt-16">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 					<div className="text-center text-slate-500 dark:text-slate-400 text-sm">

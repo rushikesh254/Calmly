@@ -1,7 +1,3 @@
-/**
- * Modern Landing Page for Calmly Mental Health Platform
- * @author Rushikesh Bodke
- */
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -122,7 +118,7 @@ export default function HomePage() {
 
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 overflow-x-hidden">
-			{/* Navigation */}
+			
 			<motion.nav
 				initial={{ opacity: 0, y: -20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -175,7 +171,7 @@ export default function HomePage() {
 				</div>
 			</motion.nav>
 
-			{/* Hero Section */}
+			
 			<motion.section
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
@@ -236,7 +232,7 @@ export default function HomePage() {
 				</div>
 			</motion.section>
 
-			{/* Features Section */}
+			
 			<motion.section
 				initial={{ opacity: 0 }}
 				whileInView={{ opacity: 1 }}
@@ -291,7 +287,7 @@ export default function HomePage() {
 				</div>
 			</motion.section>
 
-			{/* Testimonials Section */}
+			
 			<motion.section
 				initial={{ opacity: 0 }}
 				whileInView={{ opacity: 1 }}
@@ -352,7 +348,7 @@ export default function HomePage() {
 				</div>
 			</motion.section>
 
-			{/* CTA Section */}
+			
 			<motion.section
 				initial={{ opacity: 0 }}
 				whileInView={{ opacity: 1 }}
@@ -386,7 +382,7 @@ export default function HomePage() {
 				</div>
 			</motion.section>
 
-			{/* Footer */}
+			
 			<motion.footer
 				initial={{ opacity: 0 }}
 				whileInView={{ opacity: 1 }}
