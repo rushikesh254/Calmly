@@ -1,12 +1,6 @@
 import * as React from "react";
 import { cva } from "class-variance-authority";
-
 import { cn } from "@/lib/utils";
-
-/**
- * Variant-driven class generator for the Alert component.
- * Keeps visual styles consistent across different alert states.
- */
 const alertStyles = cva(
 	"relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
 	{
@@ -28,9 +22,6 @@ const alertStyles = cva(
 	}
 );
 
-/**
- * Base alert container.
- */
 const Alert = React.forwardRef(
 	({ className, variant, ...props }, forwardedRef) => (
 		<div
@@ -43,9 +34,6 @@ const Alert = React.forwardRef(
 );
 Alert.displayName = "Alert";
 
-/**
- * Alert title text.
- */
 const AlertTitle = React.forwardRef(({ className, ...props }, forwardedRef) => (
 	<h5
 		ref={forwardedRef}
@@ -55,9 +43,6 @@ const AlertTitle = React.forwardRef(({ className, ...props }, forwardedRef) => (
 ));
 AlertTitle.displayName = "AlertTitle";
 
-/**
- * Alert description/body text.
- */
 const AlertDescription = React.forwardRef(
 	({ className, ...props }, forwardedRef) => (
 		<div

@@ -1,4 +1,1 @@
-// Chatbot component disabled temporarily.
-export default function Chatbot() {
-	return null;
-}
+export default function Chatbot() { return null; }

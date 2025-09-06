@@ -1,7 +1,4 @@
-/**
- * MoodLog Component for Calmly Mental Health Platform
- * @author Rushikesh Bodke
- */
+// Mood tracking with history, stats, and chart.
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -37,7 +34,6 @@ const MoodLog = () => {
 		return t;
 	};
 
-	// Mood emojis and colors
 	const moodConfig = {
 		1: { emoji: "😢", color: "bg-red-500", label: "Very Low" },
 		2: { emoji: "😞", color: "bg-red-400", label: "Low" },

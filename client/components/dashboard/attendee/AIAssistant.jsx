@@ -1,7 +1,5 @@
 "use client";
 
-// Simple placeholder card for the upcoming AI Assistant feature.
-// UI and behavior are intentionally unchanged; this just clarifies structure.
 export default function AIAssistant() {
 	const containerClass = "max-w-4xl mx-auto";
 	const cardClass =
