@@ -36,7 +36,7 @@ export const MHPSessions = ({ email }) => {
 		fetchSessionRequests();
 	}, [email]);
 
-	// Pick up attendee filter set by Clients page and then clear it so refreshes don't persist unintentionally
+	// Pick up attendee filter set by Clients page
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 		const key = "mhpSessionsFilterAttendeeEmail";
@@ -176,8 +176,6 @@ export const MHPSessions = ({ email }) => {
 			);
 			const data = await response.json();
 			if (response.ok) {
-				// alert(data.message);
-				// Update session status in the UI, e.g., refresh sessions list
 			} else {
 				alert("Error: " + data.error);
 			}

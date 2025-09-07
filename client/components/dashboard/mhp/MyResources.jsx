@@ -309,18 +309,6 @@ export const MyResources = ({ email }) => {
 										)}
 									</div>
 								) : (
-									// <div className="space-y-4">
-									//   <p className="text-gray-600 line-clamp-2 text-sm">
-									//     {resource.content}
-									//   </p>
-									//   <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
-									//     <video
-									//       controls
-									//       className="w-full h-full object-cover"
-									//       src={resource.mediaUrl}
-									//     />
-									//   </div>
-									// </div>
 									<div className="mb-4">
 										<div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
 											<video

@@ -16,7 +16,6 @@ export const MHPSessionCard = ({
 	onComplete,
 	onProvideRecommendation,
 }) => {
-	// Status flags derived from props (no behavior change)
 	const isPaymentCompleted = paymentStatus === "completed";
 	const isPaymentOffline = sessionType === "offline";
 	const isApproved = sessionStatus === "approved";
@@ -24,20 +23,17 @@ export const MHPSessionCard = ({
 	const isCompleted = sessionStatus === "completed";
 	const isOffline = sessionType === "offline";
 
-	// Dates and quick comparisons
 	const sessionDate = new Date(datetime);
 	const today = new Date();
 	const isToday = sessionDate.toDateString() === today.toDateString();
 	const isPastSession = sessionDate < today && !isToday;
 
-	// Local UI state
 	const [inputRecommendation, setInputRecommendation] = useState("");
 	const [showFullRecommendation, setShowFullRecommendation] = useState(false);
 	const [isEditingRecommendation, setIsEditingRecommendation] = useState(false);
 	const [editedRecommendation, setEditedRecommendation] = useState("");
 	const [showError, setShowError] = useState(false);
 
-	// Precomputed formatted date strings for readability (same formats as before)
 	const scheduledAtString = sessionDate.toLocaleString("en-US", {
 		weekday: "short",
 		month: "short",
@@ -55,7 +51,6 @@ export const MHPSessionCard = ({
 		minute: "2-digit",
 	});
 
-	// Handlers
 	const handleRecommendationChange = (e) => {
 		setInputRecommendation(e.target.value);
 	};
