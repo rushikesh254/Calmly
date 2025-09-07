@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AdminLoginForm } from "./components/AdminLoginForm";
 
@@ -11,6 +11,13 @@ const AdminLoginPage = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
+
+	// Clear stale error automatically after a short delay (visual polish only)
+	useEffect(() => {
+		if (!error) return;
+		const t = setTimeout(() => setError(""), 5000);
+		return () => clearTimeout(t);
+	}, [error]);
 
 	const router = useRouter();
 
@@ -65,14 +72,19 @@ const AdminLoginPage = () => {
 	};
 
 	return (
-		<AdminLoginForm
-			email={email}
-			password={password}
-			error={error}
-			handleEmailChange={(e) => setEmail(e.target.value)}
-			handlePasswordChange={(e) => setPassword(e.target.value)}
-			handleSubmit={handleSubmit}
-		/>
+		<>
+			<div className="sr-only" aria-live="polite">
+				{error ? `Authentication error: ${error}` : "Enter admin credentials"}
+			</div>
+			<AdminLoginForm
+				email={email}
+				password={password}
+				error={error}
+				handleEmailChange={(e) => setEmail(e.target.value)}
+				handlePasswordChange={(e) => setPassword(e.target.value)}
+				handleSubmit={handleSubmit}
+			/>
+		</>
 	);
 };
 

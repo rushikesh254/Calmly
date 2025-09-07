@@ -1,119 +1,34 @@
-"use client";
+"use client"; // Animations + interactive theme toggle.
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { motion } from "framer-motion";
-import {
-	Heart,
-	Users,
-	Shield,
-	Clock,
-	MessageCircle,
-	TrendingUp,
-	ArrowRight,
-	Star,
-	Sparkles,
-} from "lucide-react";
+import { Heart, Users, Shield, Clock, MessageCircle, TrendingUp, ArrowRight, Star, Sparkles } from "lucide-react";
 
 export default function HomePage() {
+	// Static marketing data (unchanged content).
 	const features = [
-		{
-			icon: <Heart className="w-8 h-8" />,
-			title: "Professional Therapy",
-			description:
-				"Connect with licensed mental health professionals for personalized support and guidance.",
-			color: "text-red-500",
-		},
-		{
-			icon: <Shield className="w-8 h-8" />,
-			title: "Secure & Private",
-			description:
-				"Your mental health journey is protected with end-to-end encryption and strict privacy policies.",
-			color: "text-blue-500",
-		},
-		{
-			icon: <Clock className="w-8 h-8" />,
-			title: "24/7 Support",
-			description:
-				"Access resources, track your mood, and get support whenever you need it, day or night.",
-			color: "text-green-500",
-		},
-		{
-			icon: <MessageCircle className="w-8 h-8" />,
-			title: "AI Chatbot",
-			description:
-				"Get instant support and guidance from our intelligent mental health assistant.",
-			color: "text-purple-500",
-		},
-		{
-			icon: <TrendingUp className="w-8 h-8" />,
-			title: "Mood Tracking",
-			description:
-				"Monitor your emotional well-being with our comprehensive mood tracking tools.",
-			color: "text-orange-500",
-		},
-		{
-			icon: <Users className="w-8 h-8" />,
-			title: "Community Support",
-			description:
-				"Join a supportive community of individuals on similar mental health journeys.",
-			color: "text-indigo-500",
-		},
+		{ icon: <Heart className="w-8 h-8" />, title: "Professional Therapy", description: "Connect with licensed mental health professionals for personalized support and guidance.", color: "text-red-500" },
+		{ icon: <Shield className="w-8 h-8" />, title: "Secure & Private", description: "Your mental health journey is protected with end-to-end encryption and strict privacy policies.", color: "text-blue-500" },
+		{ icon: <Clock className="w-8 h-8" />, title: "24/7 Support", description: "Access resources, track your mood, and get support whenever you need it, day or night.", color: "text-green-500" },
+		{ icon: <MessageCircle className="w-8 h-8" />, title: "AI Chatbot", description: "Get instant support and guidance from our intelligent mental health assistant.", color: "text-purple-500" },
+		{ icon: <TrendingUp className="w-8 h-8" />, title: "Mood Tracking", description: "Monitor your emotional well-being with our comprehensive mood tracking tools.", color: "text-orange-500" },
+		{ icon: <Users className="w-8 h-8" />, title: "Community Support", description: "Join a supportive community of individuals on similar mental health journeys.", color: "text-indigo-500" }
 	];
 
 	const testimonials = [
-		{
-			name: "Sarah Johnson",
-			role: "Student",
-			content:
-				"Calmly has been a game-changer for my mental health. The mood tracking feature helps me understand my patterns better.",
-			rating: 5,
-		},
-		{
-			name: "Michael Chen",
-			role: "Professional",
-			content:
-				"The professional therapy sessions are incredibly helpful. I feel supported and understood.",
-			rating: 5,
-		},
-		{
-			name: "Emily Rodriguez",
-			role: "Parent",
-			content:
-				"As a busy parent, having 24/7 access to mental health resources has been invaluable.",
-			rating: 5,
-		},
+		{ name: "Sarah Johnson", role: "Student", content: "Calmly has been a game-changer for my mental health. The mood tracking feature helps me understand my patterns better.", rating: 5 },
+		{ name: "Michael Chen", role: "Professional", content: "The professional therapy sessions are incredibly helpful. I feel supported and understood.", rating: 5 },
+		{ name: "Emily Rodriguez", role: "Parent", content: "As a busy parent, having 24/7 access to mental health resources has been invaluable.", rating: 5 }
 	];
 
-	const staggeredContainer = {
-		hidden: { opacity: 0 },
-		visible: {
-			opacity: 1,
-			transition: {
-				staggerChildren: 0.1,
-				delayChildren: 0.2,
-			},
-		},
-	};
-
+	// Framer Motion variants.
+	const staggeredContainer = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } } };
 	const cardVariants = {
 		hidden: { opacity: 0, y: 30 },
-		visible: {
-			opacity: 1,
-			y: 0,
-			transition: {
-				duration: 0.6,
-				ease: "easeOut",
-			},
-		},
-		hover: {
-			y: -8,
-			transition: {
-				duration: 0.3,
-				ease: "easeOut",
-			},
-		},
+		visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+		hover: { y: -8, transition: { duration: 0.3, ease: "easeOut" } }
 	};
 
 	return (
