@@ -5,58 +5,72 @@ import { ProfessionalCard } from "@/components/dashboard/attendee/ProfessionalCa
 
 export const Professionals = ({ email }) => {
 	const [professionals, setProfessionals] = useState([]);
+	const [loading, setLoading] = useState(true);
 	const [message, setMessage] = useState(""); // success/error toast
 	const [requestedSessions, setRequestedSessions] = useState({}); // session requests per professional
 
 	// Fetch professionals
 	useEffect(() => {
+		let isMounted = true;
 		const fetchProfessionals = async () => {
-			const token = localStorage.getItem("token");
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/professionals`,
-				{
-					headers: {
-						Authorization: token ? `Bearer ${token}` : "",
-					},
-				}
-			);
-			const data = await response.json();
-			setProfessionals(data);
+			try {
+				const token = localStorage.getItem("token");
+				const response = await fetch(
+					`${process.env.NEXT_PUBLIC_API_URL}/api/professionals`,
+					{
+						headers: {
+							Authorization: token ? `Bearer ${token}` : "",
+						},
+					}
+				);
+				const data = await response.json().catch(() => []);
+				if (!response.ok) throw new Error(data?.error || "Failed to load");
+				if (isMounted) setProfessionals(Array.isArray(data) ? data : []);
+			} catch (err) {
+				if (isMounted) setMessage("Failed to load professionals");
+			} finally {
+				if (isMounted) setLoading(false);
+			}
 		};
 		fetchProfessionals();
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	// Request a session for the selected professional
 	const requestSession = async (professionalEmail, sessionType) => {
 		if (!email) return;
-		const sessionData = {
-			attendee_email: email,
-			professional_email: professionalEmail,
-			session_type: sessionType,
-			session_date: new Date().toISOString(),
-		};
-
-		const token = localStorage.getItem("token");
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_API_URL}/api/sessions/request`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: token ? `Bearer ${token}` : "",
-				},
-				body: JSON.stringify(sessionData),
+		try {
+			const sessionData = {
+				attendee_email: email,
+				professional_email: professionalEmail,
+				session_type: sessionType,
+				session_date: new Date().toISOString(),
+			};
+			const token = localStorage.getItem("token");
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/api/sessions/request`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: token ? `Bearer ${token}` : "",
+					},
+					body: JSON.stringify(sessionData),
+				}
+			);
+			await response.json().catch(() => ({}));
+			if (response.ok) {
+				setRequestedSessions((prevState) => ({
+					...prevState,
+					[professionalEmail]: sessionType,
+				}));
+				setMessage("Session requested successfully!");
+			} else {
+				setMessage("Failed to request session. Please try again.");
 			}
-		);
-
-		await response.json();
-		if (response.ok) {
-			setRequestedSessions((prevState) => ({
-				...prevState,
-				[professionalEmail]: sessionType,
-			}));
-			setMessage("Session requested successfully!");
-		} else {
+		} catch {
 			setMessage("Failed to request session. Please try again.");
 		}
 	};
@@ -71,11 +85,16 @@ export const Professionals = ({ email }) => {
 	}, [message]);
 
 	const approvedProfessionals = professionals.filter(
-		(p) => p.status === "approved"
+		(p) => p?.status === "approved"
 	);
 
 	return (
 		<div>
+			{loading && (
+				<div className="p-4 mb-6 rounded-lg bg-slate-100 dark:bg-slate-800 text-sm text-slate-600 dark:text-slate-300">
+					Loading professionals...
+				</div>
+			)}
 			<section id="professionals" className="mb-12">
 				<h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent mb-8">
 					Available Professionals
