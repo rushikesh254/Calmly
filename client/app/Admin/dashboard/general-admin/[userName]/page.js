@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { GeneralAdminDashboard } from "./general-admin-dashboard";
 
-export default function GeneralAdminDashboardPage({ params }) {
+// Updated to use the useParams hook (Next.js 15 requires awaiting params otherwise)
+export default function GeneralAdminDashboardPage() {
 	const router = useRouter();
-	const { userName } = params;
+	const { userName } = useParams();
 	const [authVerified, setAuthVerified] = useState(false);
 	const [email, setEmail] = useState(null);
 
@@ -19,21 +20,21 @@ export default function GeneralAdminDashboardPage({ params }) {
 	}, []);
 
 	useEffect(() => {
-		const token = localStorage.getItem("accessToken");
-		const storedUserName = localStorage.getItem("userName");
-		if (!token) {
-			router.push("/admin");
-			return;
-		}
 		try {
+			const token = localStorage.getItem("accessToken");
+			const storedUserName = localStorage.getItem("userName");
+			if (!token) {
+				router.push("/admin");
+				return;
+			}
 			const decoded = jwtDecode(token);
 			if (decoded.role !== "general-admin" || storedUserName !== userName) {
 				router.push("/admin");
-			} else {
-				setAuthVerified(true);
+				return;
 			}
+			setAuthVerified(true);
 		} catch {
-			localStorage.removeItem("accessToken");
+			try { localStorage.removeItem("accessToken"); } catch {}
 			router.push("/admin");
 		}
 	}, [router, userName]);

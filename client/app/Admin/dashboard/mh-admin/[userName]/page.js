@@ -1,13 +1,12 @@
 "use client";
-
-
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { MHAdminDashboard } from "./mh-admin-dashboard";
 
-export default function MHAdminDashboardPage({ params }) {
-	const { userName } = params;
+// Updated to use useParams to avoid Next.js dynamic params warning
+export default function MHAdminDashboardPage() {
+	const { userName } = useParams();
 	const router = useRouter();
 
 	const [authVerified, setAuthVerified] = useState(false);

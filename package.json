@@ -27,6 +27,13 @@
 	"devDependencies": {
 		"concurrently": "^8.2.2"
 	},
+	"overrides": {
+		"eslint": "8.57.0",
+		"@typescript-eslint/eslint-plugin": "7.18.0",
+		"@typescript-eslint/parser": "7.18.0",
+		"@typescript-eslint/utils": "7.18.0",
+		"@typescript-eslint/type-utils": "7.18.0"
+	},
 	"keywords": [
 		"mental-health",
 		"therapy",
