@@ -36,7 +36,6 @@ export default function ResetPassword() {
 			localStorage.removeItem("email");
 			localStorage.removeItem("role");
 
-			// Redirect after 2 seconds
 			setTimeout(() => {
 				router.push("/signin");
 			}, 3000);
@@ -49,7 +48,7 @@ export default function ResetPassword() {
 
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-teal-75 overflow-x-hidden">
-			{/* Modal */}
+			
 			{isModalOpen && (
 				<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
 					<div
@@ -64,21 +63,10 @@ export default function ResetPassword() {
 							}`}>
 							{modalMessage}
 						</p>
-						{/* <Button
-              onClick={() => setIsModalOpen(false)}
-              className={`w-full ${
-                isError 
-                  ? "bg-red-600 hover:bg-red-700" 
-                  : "bg-green-600 hover:bg-green-700"
-              }`}
-            >
-              Close
-            </Button> */}
 					</div>
 				</div>
 			)}
 
-			{/* Header */}
 			<header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60">
 				<nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex justify-between items-center h-20">
@@ -91,7 +79,6 @@ export default function ResetPassword() {
 				</nav>
 			</header>
 
-			{/* Main Content */}
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<div className="flex items-center justify-center min-h-[calc(100vh-160px)] supports-[height:100dvh]:min-h-[calc(100dvh-160px)]">
 					<Card className="w-full max-w-md p-8 bg-white/90 backdrop-blur-sm border border-slate-200/60 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
@@ -140,7 +127,6 @@ export default function ResetPassword() {
 				</div>
 			</main>
 
-			{/* Footer */}
 			<footer className="border-t border-slate-200/60 bg-white/80 backdrop-blur-md">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 					<div className="text-center text-slate-500 text-sm">

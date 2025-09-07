@@ -17,7 +17,6 @@ export default function ForgotPassword() {
 		e.preventDefault();
 		if (!role || !email) return alert("Please fill all fields");
 
-		// Determine API base URL: prefer env, fallback to current origin
 		const apiBase =
 			process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
 			(typeof window !== "undefined" ? window.location.origin : "");
@@ -32,9 +31,7 @@ export default function ForgotPassword() {
 			let data = {};
 			try {
 				data = await res.json();
-			} catch (_) {
-				// Non-JSON response; leave data as {}
-			}
+			} catch (_) {}
 
 			if (res.ok) {
 				localStorage.setItem("otp", data.otp);
@@ -47,17 +44,12 @@ export default function ForgotPassword() {
 				);
 			}
 		} catch (err) {
-			// Network/CORS or invalid URL
-			alert(
-				err?.message ||
-					"Network error. Please check your connection or API URL."
-			);
+			alert(err?.message || "Network error. Please check your connection or API URL.");
 		}
 	};
 
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 overflow-x-hidden">
-			{/* Header */}
 			<header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-700/60">
 				<nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex justify-between items-center h-20">
@@ -73,7 +65,6 @@ export default function ForgotPassword() {
 				</nav>
 			</header>
 
-			{/* Main Content */}
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<div className="flex items-center justify-center min-h-[calc(100vh-160px)] supports-[height:100dvh]:min-h-[calc(100dvh-160px)]">
 					<Card className="w-full max-w-md p-8 bg-white/90 dark:bg-slate-900/70 backdrop-blur-sm border border-slate-200/60 dark:border-slate-700/60 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
@@ -147,7 +138,6 @@ export default function ForgotPassword() {
 				</div>
 			</main>
 
-			{/* Footer */}
 			<footer className="border-t border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 					<div className="text-center text-slate-500 dark:text-slate-400 text-sm">

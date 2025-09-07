@@ -1,8 +1,5 @@
-/**
- * Contact Page — Calmly Mental Health Platform
- * Provides contact options and urgent support details.
- * Author: Rushikesh Bodke
- */
+"use client";
+// Contact options and urgent support
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -19,7 +16,6 @@ import {
 export default function Contact() {
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-			{/* Header */}
 			<header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-700/60">
 				<nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex justify-between items-center h-20">
@@ -55,7 +51,7 @@ export default function Contact() {
 				</nav>
 			</header>
 
-			{/* Main */}
+			
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<div className="text-center mb-16">
 					<div className="w-20 h-20 bg-gradient-to-r from-indigo-600 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -73,7 +69,7 @@ export default function Contact() {
 					</p>
 				</div>
 
-				{/* Contact Methods */}
+				
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
 					<Card className="p-6 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border border-indigo-200/60 dark:border-indigo-700/60 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
 						<div className="text-center space-y-4">
@@ -131,7 +127,7 @@ export default function Contact() {
 					</Card>
 				</div>
 
-				{/* Help CTA */}
+				
 				<div className="text-center space-y-6">
 					<Card className="p-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200/60 dark:border-slate-700/60">
 						<h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
@@ -165,7 +161,7 @@ export default function Contact() {
 				</div>
 			</main>
 
-			{/* Footer */}
+			
 			<footer className="border-t border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md mt-16">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 					<div className="text-center text-slate-500 dark:text-slate-400 text-sm">

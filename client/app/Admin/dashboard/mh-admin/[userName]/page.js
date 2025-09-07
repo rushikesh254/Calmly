@@ -1,10 +1,5 @@
 "use client";
 
-// Human-readable refactor: logic & UI unchanged.
-// Responsibilities:
-// 1. Read stored email for display.
-// 2. Validate JWT + role + username; redirect to /admin if invalid.
-// 3. Show loading placeholder until verified.
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -18,17 +13,14 @@ export default function MHAdminDashboardPage({ params }) {
 	const [authVerified, setAuthVerified] = useState(false);
 	const [email, setEmail] = useState(null);
 
-	// Load email (non-blocking, independent of auth)
 	useEffect(() => {
 		try {
 			const storedEmail = typeof window !== "undefined" ? localStorage.getItem("email") : null;
 			setEmail(storedEmail);
 		} catch {
-			// Ignore; not critical for rendering dashboard.
 		}
 	}, []);
 
-	// Verify token + role + username
 	useEffect(() => {
 		try {
 			const token = localStorage.getItem("accessToken");
@@ -49,7 +41,6 @@ export default function MHAdminDashboardPage({ params }) {
 				router.push("/admin");
 			}
 		} catch {
-			// Corrupt / invalid token scenario
 			try { localStorage.removeItem("accessToken"); } catch {}
 			router.push("/admin");
 		}

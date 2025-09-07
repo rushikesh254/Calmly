@@ -10,14 +10,12 @@ import { Heart, Eye, EyeOff, Lock, Mail, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function AttendeeSignInPage() {
-	// Local UI state
 	const [credentials, setCredentials] = useState({ email: "", password: "" });
 	const [errorMessage, setErrorMessage] = useState("");
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 
-	// Small helpers for readability (no behavior change)
 	const apiBase = process.env.NEXT_PUBLIC_API_URL;
 	const inputIconClass =
 		"absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400";
@@ -26,13 +24,11 @@ export default function AttendeeSignInPage() {
 	const submitButtonClass =
 		"w-full bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg btn-hover-lift transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed h-12";
 
-	// Form field updates
 	const handleInputChange = (event) => {
 		setCredentials({ ...credentials, [event.target.name]: event.target.value });
 		if (errorMessage) setErrorMessage("");
 	};
 
-	// Submit credentials to API and route on success
 	const handleFormSubmit = async (event) => {
 		event.preventDefault();
 		setErrorMessage("");
@@ -61,7 +57,7 @@ export default function AttendeeSignInPage() {
 		}
 	};
 
-	// Framer Motion variants
+	// Motion
 	const staggeredContainer = {
 		hidden: { opacity: 0, y: 20 },
 		visible: {
