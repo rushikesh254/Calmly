@@ -10,7 +10,6 @@ import { MHPRequest } from "./mh-admin/MHPRequests";
 import { ViewResources } from "./mh-admin/ViewResources";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-// Section keys kept in one place to avoid typos and keep comparisons consistent
 const SECTION = {
 	ANALYTICS_USERS: "analytics-users",
 	ATTENDEES: "attendees",
@@ -22,11 +21,9 @@ const SECTION = {
 	RESOURCES_SHOW: "resourcesShow",
 };
 
-// Default landing section per role
 const getInitialSection = (role) =>
 	role === "general-admin" ? SECTION.ANALYTICS_USERS : SECTION.MHP_REQUEST;
 
-// Static nav configuration per role (icons unchanged)
 const NAV_ITEMS = {
 	"general-admin": [
 		{
@@ -171,7 +168,7 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 	const router = useRouter();
 	const [activeSection, setActiveSection] = useState(getInitialSection(role));
 
-	// Initialize section from URL hash (supports deep linking) – runs only once.
+	// Hash deep link
 	useEffect(() => {
 		if (typeof window !== "undefined" && window.location.hash) {
 			const hashValue = window.location.hash.slice(1);
@@ -194,7 +191,6 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 		router.push("/admin");
 	}, [router]);
 
-	// Encapsulate decision logic for main panel content – easier to scan & extend.
 	const mainContent = useMemo(() => {
 		if (role === "general-admin") {
 			switch (activeSection) {

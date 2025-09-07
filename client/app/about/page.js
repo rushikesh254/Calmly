@@ -1,4 +1,3 @@
-// About page: mission, team, values, CTA.
 import Link from "next/link";
 import { Heart, Users, Target, Award, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";

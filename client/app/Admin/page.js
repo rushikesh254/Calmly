@@ -1,6 +1,5 @@
 "use client";
 
-// Admin login page. Functionality and UI are unchanged; code is reorganized for clarity.
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminLoginForm } from "./components/AdminLoginForm";
