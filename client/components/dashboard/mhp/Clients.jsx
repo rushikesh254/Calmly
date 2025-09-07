@@ -7,7 +7,7 @@ export const Clients = ({ email }) => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
 	const [query, setQuery] = useState("");
-	const [attendeesIndex, setAttendeesIndex] = useState({}); // email -> attendee object
+	const [attendeesIndex, setAttendeesIndex] = useState({});
 	const [profileOpen, setProfileOpen] = useState(false);
 	const [selectedClient, setSelectedClient] = useState(null);
 
@@ -16,7 +16,7 @@ export const Clients = ({ email }) => {
 		return localStorage.getItem("token") || localStorage.getItem("accessToken");
 	};
 
-	// Fetch sessions for this professional
+	// Sessions
 	useEffect(() => {
 		let mounted = true;
 		const fetchData = async () => {
@@ -49,7 +49,7 @@ export const Clients = ({ email }) => {
 		};
 	}, [email]);
 
-	// Optionally fetch attendees to enrich username by email (public endpoint)
+	// Attendees index
 	useEffect(() => {
 		let mounted = true;
 		const fetchAttendees = async () => {
@@ -75,7 +75,7 @@ export const Clients = ({ email }) => {
 		};
 	}, []);
 
-	// Derive unique clients from sessions
+	// Unique clients
 	const clients = useMemo(() => {
 		const map = new Map();
 		for (const s of sessions) {

@@ -60,7 +60,6 @@ const MHPProfile = ({ userName }) => {
 					rosterOnline: data.rosterOnline || {},
 					rosterOffline: data.rosterOffline || {},
 				});
-				// setProfileData(data);
 			} catch {
 				setError("Error loading profile data");
 			}

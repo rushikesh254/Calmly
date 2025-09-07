@@ -13,19 +13,16 @@ export const ProfessionalCard = ({
 			? localStorage.getItem("token") || localStorage.getItem("accessToken")
 			: null;
 
-	// Initialize from sessionStatus when provided
 	useEffect(() => {
 		if (sessionStatus && typeof sessionStatus === "object") {
 			if (sessionStatus.status === "pending" && sessionStatus.type) {
 				setRequestedSessionType(sessionStatus.type);
 			}
 		} else if (typeof sessionStatus === "string") {
-			// Backward compatibility when only the type string was provided
 			setRequestedSessionType(sessionStatus);
 		}
 	}, [sessionStatus]);
 
-	// Fetch availability for professional
 	useEffect(() => {
 		const fetchAvail = async () => {
 			try {
@@ -196,7 +193,6 @@ export const ProfessionalCard = ({
 				)}
 			</div>
 
-			{/* Availability slots */}
 			{availability.length > 0 && (
 				<div className="mt-6">
 					<h4 className="text-sm font-semibold text-gray-700 mb-2">

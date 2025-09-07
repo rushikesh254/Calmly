@@ -1,7 +1,3 @@
-/**
- * Modern Dashboard Layout for Calmly Mental Health Platform
- * @author Rushikesh Bodke
- */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -40,7 +36,7 @@ export const ModernDashboardLayout = ({
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [isDesktop, setIsDesktop] = useState(false);
 	const mainRef = useRef(null);
-	const overlaySidebar = role === "attendee" || role === "mhp"; // Use hamburger overlay for attendee and MHP on desktop
+	const overlaySidebar = role === "attendee" || role === "mhp";
 
 	// Sync active section with URL hash and track desktop breakpoint
 	useEffect(() => {
@@ -72,12 +68,12 @@ export const ModernDashboardLayout = ({
 		};
 	}, []);
 
-	// Keep local activeSection in sync with parent if provided
+	// Sync with parent when provided
 	useEffect(() => {
 		if (currentSection) setActiveSection(currentSection);
 	}, [currentSection]);
 
-	// Prevent background scroll on mobile when sidebar is open
+	// Lock body scroll on mobile when sidebar open
 	useEffect(() => {
 		if (typeof document === "undefined") return;
 		const root = document.documentElement;
@@ -92,17 +88,12 @@ export const ModernDashboardLayout = ({
 	const handleSectionChange = (section) => {
 		setActiveSection(section);
 		setSidebarOpen(false);
-		if (typeof window !== "undefined") {
-			// Update only the hash so dependent components listening to `hashchange` react immediately
-			window.location.hash = section;
-		} else {
-			// Fallback (shouldn't run on client components)
-			router.push(`/dashboard/${role}/${userName}#${section}`);
-		}
+		if (typeof window !== "undefined") window.location.hash = section;
+		else router.push(`/dashboard/${role}/${userName}#${section}`);
 		if (typeof onSectionChange === "function") {
 			onSectionChange(section);
 		}
-		// Ensure content scroll resets to top so hero/header of new section is visible
+		// Reset scroll
 		if (mainRef.current) {
 			try {
 				mainRef.current.scrollTo({ top: 0, behavior: "instant" });

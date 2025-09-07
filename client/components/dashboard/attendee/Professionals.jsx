@@ -1,15 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
-// Card used to display each professional
 import { ProfessionalCard } from "@/components/dashboard/attendee/ProfessionalCard";
 
 export const Professionals = ({ email }) => {
 	const [professionals, setProfessionals] = useState([]);
 	const [loading, setLoading] = useState(true);
-	const [message, setMessage] = useState(""); // success/error toast
-	const [requestedSessions, setRequestedSessions] = useState({}); // session requests per professional
+	const [message, setMessage] = useState("");
+	const [requestedSessions, setRequestedSessions] = useState({});
 
-	// Fetch professionals
 	useEffect(() => {
 		let isMounted = true;
 		const fetchProfessionals = async () => {
@@ -38,7 +36,6 @@ export const Professionals = ({ email }) => {
 		};
 	}, []);
 
-	// Request a session for the selected professional
 	const requestSession = async (professionalEmail, sessionType) => {
 		if (!email) return;
 		try {
@@ -117,7 +114,6 @@ export const Professionals = ({ email }) => {
 				)}
 			</section>
 
-			{/*  Display the success/error message */}
 			{message && (
 				<div
 					className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${

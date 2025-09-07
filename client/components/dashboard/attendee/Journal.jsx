@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-// Retrieve the auth token from localStorage (supports legacy key fallback)
 const getAuthToken = () =>
 	(typeof window !== "undefined" &&
 		(localStorage.getItem("token") || localStorage.getItem("accessToken"))) ||
@@ -16,7 +15,6 @@ export default function Journal() {
 	const [content, setContent] = useState("");
 	const [editingId, setEditingId] = useState(null);
 
-	// Class names for readability; UI remains the same
 	const inputClass =
 		"w-full px-4 py-2 rounded-lg border border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-indigo-500/40";
 	const textAreaClass =

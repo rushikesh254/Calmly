@@ -1,4 +1,3 @@
-// Mood tracking with history, stats, and chart.
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -189,7 +188,6 @@ const MoodLog = () => {
 				</Button>
 			</div>
 
-			{/* Mood Form */}
 			{showForm && !authMissing && (
 				<Card className="p-6 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200/60 dark:border-slate-700/60">
 					<form onSubmit={handleSubmit} className="space-y-6">

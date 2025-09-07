@@ -25,7 +25,6 @@ export default function MHPSignUpPage() {
 	const [statusMessage, setStatusMessage] = useState("");
 	const [menuOpen, setMenuOpen] = useState(false);
 
-	// Close menu on Escape and lock body scroll when open
 	useEffect(() => {
 		const handleKeyDown = (e) => {
 			if (e.key === "Escape") setMenuOpen(false);
@@ -82,7 +81,6 @@ export default function MHPSignUpPage() {
 
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 overflow-x-hidden">
-			{/* Approval Modal */}
 			{modalOpen && (
 				<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
 					<div className="p-6 rounded-lg shadow-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/40">
@@ -99,7 +97,7 @@ export default function MHPSignUpPage() {
 				</div>
 			)}
 
-			{/* Header */}
+
 			<header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-700/60">
 				<nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex justify-between items-center h-20">
@@ -121,7 +119,7 @@ export default function MHPSignUpPage() {
 				</nav>
 			</header>
 
-			{/* Mobile Menu Drawer */}
+
 			{menuOpen && (
 				<div className="fixed inset-0 z-[60]">
 					{/* overlay */}
@@ -182,7 +180,7 @@ export default function MHPSignUpPage() {
 				</div>
 			)}
 
-			{/* Rest of the component remains exactly the same */}
+
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<div className="flex items-center justify-center min-h-[calc(100vh-160px)] supports-[height:100dvh]:min-h-[calc(100dvh-160px)]">
 					<Card className="w-full max-w-md p-8 bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/60 dark:border-slate-800 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">

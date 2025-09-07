@@ -12,8 +12,7 @@ export class ErrorBoundary extends React.Component {
 	}
 
 	componentDidCatch(error, errorInfo) {
-		// Optionally log to a service
-		// console.error("Section render error:", error, errorInfo);
+		// Could forward to logging service
 	}
 
 	render() {

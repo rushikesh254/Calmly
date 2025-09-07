@@ -66,7 +66,6 @@ export const SessionCard = ({
 
 	return (
 		<div className="bg-white rounded-xl shadow-md p-6 mb-4 transition-all duration-200 hover:shadow-lg border border-gray-100">
-			{/* Session Schedule Banner */}
 			{isApproved &&
 				(isPaymentCompleted || isPaymentOffline) &&
 				!isPastSession && (
@@ -258,7 +257,7 @@ export const SessionCard = ({
 				{isApproved && isPaymentCompleted && isToday && !isOffline && (
 					<Link
 						legacyBehavior
-						href={`/room/${sessionID}`} // Dynamic room link
+						href={`/room/${sessionID}`}
 						passHref>
 						<a
 							target="_blank"

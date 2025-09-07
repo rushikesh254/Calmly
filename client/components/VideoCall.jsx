@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -15,7 +14,6 @@ export default function VideoCall({ roomID, userID, userName }) {
 					"@zegocloud/zego-uikit-prebuilt"
 				);
 
-				// Try to use environment variables if available
 				const appID = process.env.NEXT_PUBLIC_ZEGO_APP_ID || 1519959050;
 				const serverSecret =
 					process.env.NEXT_PUBLIC_ZEGO_SERVER_SECRET ||

@@ -1,7 +1,3 @@
-/**
- * Modern Sign Up Page for Calmly Mental Health Platform
- * @author Rushikesh Bodke
- */
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -11,7 +7,6 @@ import { motion } from "framer-motion";
 import { Heart, Users, UserCheck, ArrowRight } from "lucide-react";
 
 export default function SignUpPage() {
-	// Page-wide stagger settings for entrance animations
 	const staggeredContainer = {
 		hidden: { opacity: 0 },
 		visible: {
@@ -23,7 +18,6 @@ export default function SignUpPage() {
 		},
 	};
 
-	// Single-item fade-and-lift motion
 	const fadeInUp = {
 		hidden: { opacity: 0, y: 20 },
 		visible: {
@@ -57,13 +51,12 @@ export default function SignUpPage() {
 
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 overflow-x-hidden">
-			{/* Background Pattern */}
 			<div className="absolute inset-0 overflow-hidden">
 				<div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-teal-400/20 rounded-full blur-3xl"></div>
 				<div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
 			</div>
 
-			{/* Header */}
+
 			<motion.header
 				initial={{ opacity: 0, y: -20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -88,7 +81,7 @@ export default function SignUpPage() {
 				</nav>
 			</motion.header>
 
-			{/* Main Content */}
+
 			<motion.main
 				variants={staggeredContainer}
 				initial="hidden"

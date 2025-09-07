@@ -19,7 +19,6 @@ import {
 import Link from "next/link";
 
 export default function MHPSignInPage() {
-	// Local UI state
 	const [credentials, setCredentials] = useState({ email: "", password: "" });
 	const [errorMessage, setErrorMessage] = useState("");
 	const [modalOpen, setModalOpen] = useState(false);
@@ -29,7 +28,6 @@ export default function MHPSignInPage() {
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 
-	// Small helpers to keep JSX tidy (no behavior change)
 	const apiBase = process.env.NEXT_PUBLIC_API_URL;
 	const inputIconClass =
 		"absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400";
@@ -92,7 +90,7 @@ export default function MHPSignInPage() {
 		}
 	};
 
-	// Motion variants
+	// Motion
 	const containerMotion = {
 		hidden: { opacity: 0, y: 20 },
 		visible: {

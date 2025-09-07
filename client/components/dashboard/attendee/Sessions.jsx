@@ -1,14 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import { SessionCard } from "@/components/dashboard/attendee/SessionCard"; // Card component to display a single session
+import { SessionCard } from "@/components/dashboard/attendee/SessionCard";
 
 export const Sessions = ({ email }) => {
-	// State: all sessions, current status filter, and error message (if any)
 	const [allSessions, setAllSessions] = useState([]);
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [errorMessage, setErrorMessage] = useState("");
 
-	// Class names collected for readability (no visual changes)
 	const headingClass =
 		"text-3xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent mb-8";
 	const filterBtnBase =
@@ -18,9 +16,8 @@ export const Sessions = ({ email }) => {
 	const filterApproved = `${filterBtnBase} bg-emerald-600 focus-visible:ring-emerald-500`;
 	const filterCompleted = `${filterBtnBase} bg-green-600 focus-visible:ring-green-500`;
 
-	// Fetch sessions (including approved sessions)
 	useEffect(() => {
-		if (!email) return; // Wait until email is available
+		if (!email) return;
 		const loadSessions = async () => {
 			try {
 				const authToken = localStorage.getItem("token");
@@ -38,7 +35,6 @@ export const Sessions = ({ email }) => {
 					throw new Error("Failed to fetch sessions");
 				}
 				const payload = await response.json();
-				// Sort the sessions from the latest to the past (descending order)
 				const sortedSessions = payload.sort(
 					(a, b) => new Date(b.session_date) - new Date(a.session_date)
 				);
@@ -51,7 +47,6 @@ export const Sessions = ({ email }) => {
 		loadSessions();
 	}, [email]);
 
-	// Filter sessions based on status
 	const visibleSessions = allSessions.filter(
 		(session) =>
 			statusFilter === "all" || session.session_status === statusFilter
@@ -61,7 +56,6 @@ export const Sessions = ({ email }) => {
 		<section id="sessions" className="mb-12">
 			<h2 className={headingClass}>My Sessions</h2>
 
-			{/* Filter buttons */}
 			<div className="mb-4 flex gap-2 flex-wrap">
 				<button onClick={() => setStatusFilter("all")} className={filterAll}>
 					All Sessions
@@ -83,7 +77,6 @@ export const Sessions = ({ email }) => {
 				</button>
 			</div>
 
-			{/* Display sessions (both pending and approved) */}
 			{errorMessage ? (
 				<p className="text-red-500">{errorMessage}</p>
 			) : visibleSessions.length === 0 ? (

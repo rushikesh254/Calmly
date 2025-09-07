@@ -17,15 +17,12 @@ import AvailabilityManager from "./mhp/AvailabilityManager";
 export const DashboardLayout = ({ role, userName, email }) => {
 	const router = useRouter();
 
-	// Convenience flags for readability (no behavior change)
 	const isAttendee = role === "attendee";
 	const isMHP = role === "mhp";
 
-	// Initial section: attendees land on Resources, MHPs on Sessions
 	const initialSection = isAttendee ? "resources" : "sessions";
 	const [activeSection, setActiveSection] = useState(initialSection);
 
-	// Restore section from hash if present (client-only)
 	useEffect(() => {
 		if (typeof window !== "undefined" && window.location.hash) {
 			const hashValue = window.location.hash.slice(1);
@@ -33,7 +30,6 @@ export const DashboardLayout = ({ role, userName, email }) => {
 		}
 	}, []);
 
-	// Navigation helpers
 	const handleSectionChange = (e, section) => {
 		e.preventDefault();
 		setActiveSection(section);
@@ -45,7 +41,6 @@ export const DashboardLayout = ({ role, userName, email }) => {
 		router.push("/signin");
 	};
 
-	// Sidebar navigation items (icons unchanged)
 	const navItems = {
 		attendee: [
 			{

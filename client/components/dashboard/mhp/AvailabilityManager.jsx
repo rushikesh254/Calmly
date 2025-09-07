@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 const AvailabilityManager = () => {
-	// Helpers for auth and identity (kept client-safe)
+	// Local helpers
 	const getAuthToken = () =>
 		(typeof window !== "undefined" &&
 			(localStorage.getItem("token") || localStorage.getItem("accessToken"))) ||
@@ -20,7 +20,7 @@ const AvailabilityManager = () => {
 	const [loading, setLoading] = useState(false);
 	const professionalId = getUserId();
 
-	// UI class names (unchanged visually)
+	// Classes
 	const inputClass = "border rounded px-3 py-2";
 	const headingClass = "text-xl font-semibold";
 	const messageClass = "text-sm text-indigo-600";
@@ -30,7 +30,7 @@ const AvailabilityManager = () => {
 		"text-xs px-2 py-1 rounded bg-green-100 text-green-700";
 	const badgeBookedClass = "text-xs px-2 py-1 rounded bg-red-100 text-red-700";
 
-	// Load current availability slots from the API
+	// Fetch slots
 	const loadSlots = useCallback(async () => {
 		if (!professionalId) return;
 		const res = await fetch(
@@ -44,7 +44,7 @@ const AvailabilityManager = () => {
 		loadSlots();
 	}, [professionalId, loadSlots]);
 
-	// Handle slot creation
+	// Add slot
 	const handleAddSlot = async (e) => {
 		e.preventDefault();
 		if (!date || !startTime || !endTime) return;
