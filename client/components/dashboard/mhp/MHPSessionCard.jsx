@@ -56,8 +56,10 @@ export const MHPSessionCard = ({
 	};
 
 	const handleProvideRecommendation = async () => {
-		if (!inputRecommendation) return alert("Please provide a recommendation");
-
+		if (!inputRecommendation) {
+			setShowError(true);
+			return;
+		}
 		await onProvideRecommendation(sessionID, inputRecommendation);
 		setInputRecommendation("");
 	};

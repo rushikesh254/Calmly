@@ -1,6 +1,6 @@
-"use client";
+"use client"; // Core shell for role-based dashboards – refactored for clarity & a11y (UI/behavior unchanged)
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,33 @@ import {
 } from "lucide-react";
 import { ErrorBoundary } from "@/components/dashboard/ErrorBoundary";
 
+// Navigation configuration keyed by role – hoisted so it isn't recreated each render
+const ROLE_NAV = {
+	attendee: [
+		{ name: "Dashboard", section: "dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
+		{ name: "Sessions", section: "sessions", icon: <Calendar className="w-5 h-5" /> },
+		{ name: "Resources", section: "resources", icon: <BookOpen className="w-5 h-5" /> },
+		{ name: "Professionals", section: "professionals", icon: <Users className="w-5 h-5" /> },
+		{ name: "Mood Tracker", section: "moodtracker", icon: <TrendingUp className="w-5 h-5" /> },
+		{ name: "AI Assistant", section: "assistant", icon: <Heart className="w-5 h-5" /> },
+		{ name: "Journal", section: "journal", icon: <FileText className="w-5 h-5" /> },
+	],
+	mhp: [
+		{ name: "Dashboard", section: "dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
+		{ name: "Sessions", section: "sessions", icon: <Calendar className="w-5 h-5" /> },
+		{ name: "Resources", section: "resources", icon: <BookOpen className="w-5 h-5" /> },
+		{ name: "Clients", section: "clients", icon: <Users className="w-5 h-5" /> },
+	],
+	admin: [
+		{ name: "Dashboard", section: "dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
+		{ name: "Users", section: "users", icon: <Users className="w-5 h-5" /> },
+		{ name: "Sessions", section: "sessions", icon: <Calendar className="w-5 h-5" /> },
+		{ name: "Resources", section: "resources", icon: <BookOpen className="w-5 h-5" /> },
+		{ name: "Analytics", section: "analytics", icon: <TrendingUp className="w-5 h-5" /> },
+		{ name: "Settings", section: "settings", icon: <Settings className="w-5 h-5" /> },
+	],
+};
+
 export const ModernDashboardLayout = ({
 	role,
 	userName,
@@ -32,7 +59,7 @@ export const ModernDashboardLayout = ({
 	onSectionChange,
 }) => {
 	const router = useRouter();
-	const [activeSection, setActiveSection] = useState("dashboard");
+	const [activeSection, setActiveSection] = useState("dashboard"); // local mirror of hash / prop
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [isDesktop, setIsDesktop] = useState(false);
 	const mainRef = useRef(null);
@@ -109,104 +136,11 @@ export const ModernDashboardLayout = ({
 		router.push("/signin");
 	};
 
-	const navItems = {
-		attendee: [
-			{
-				name: "Dashboard",
-				section: "dashboard",
-				icon: <LayoutDashboard className="w-5 h-5" />,
-			},
-			{
-				name: "Sessions",
-				section: "sessions",
-				icon: <Calendar className="w-5 h-5" />,
-			},
-			{
-				name: "Resources",
-				section: "resources",
-				icon: <BookOpen className="w-5 h-5" />,
-			},
-			{
-				name: "Professionals",
-				section: "professionals",
-				icon: <Users className="w-5 h-5" />,
-			},
-			{
-				name: "Mood Tracker",
-				section: "moodtracker",
-				icon: <TrendingUp className="w-5 h-5" />,
-			},
-			{
-				name: "AI Assistant",
-				section: "assistant",
-				icon: <Heart className="w-5 h-5" />,
-			},
-			{
-				name: "Journal",
-				section: "journal",
-				icon: <FileText className="w-5 h-5" />,
-			},
-		],
-		mhp: [
-			{
-				name: "Dashboard",
-				section: "dashboard",
-				icon: <LayoutDashboard className="w-5 h-5" />,
-			},
-			{
-				name: "Sessions",
-				section: "sessions",
-				icon: <Calendar className="w-5 h-5" />,
-			},
-			{
-				name: "Resources",
-				section: "resources",
-				icon: <BookOpen className="w-5 h-5" />,
-			},
-			{
-				name: "Clients",
-				section: "clients",
-				icon: <Users className="w-5 h-5" />,
-			},
-		],
-		admin: [
-			{
-				name: "Dashboard",
-				section: "dashboard",
-				icon: <LayoutDashboard className="w-5 h-5" />,
-			},
-			{
-				name: "Users",
-				section: "users",
-				icon: <Users className="w-5 h-5" />,
-			},
-			{
-				name: "Sessions",
-				section: "sessions",
-				icon: <Calendar className="w-5 h-5" />,
-			},
-			{
-				name: "Resources",
-				section: "resources",
-				icon: <BookOpen className="w-5 h-5" />,
-			},
-			{
-				name: "Analytics",
-				section: "analytics",
-				icon: <TrendingUp className="w-5 h-5" />,
-			},
-			{
-				name: "Settings",
-				section: "settings",
-				icon: <Settings className="w-5 h-5" />,
-			},
-		],
-	};
-
-	const currentNavItems = navItems[role] || navItems.attendee;
+	const currentNavItems = useMemo(() => ROLE_NAV[role] || ROLE_NAV.attendee, [role]);
 
 	return (
 		<div className="h-dvh overflow-hidden overflow-x-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 dashboard-root">
+			<a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-indigo-600 text-white px-3 py-2 rounded-md">Skip to content</a>
 			{/* Mobile Sidebar Overlay */}
 			<AnimatePresence>
 				{sidebarOpen && (

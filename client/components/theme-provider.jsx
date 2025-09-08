@@ -1,36 +1,31 @@
 "use client";
-
 import { createContext, useContext, useEffect, useState } from "react";
 
+// Context stores current theme and toggle handler. Undefined default helps detect misuse.
 const ThemeContext = createContext(undefined);
 
 export function ThemeProvider({ children }) {
 	const [theme, setTheme] = useState("light");
 
+	// Initialize from localStorage on first mount (client-side only) and set HTML class.
 	useEffect(() => {
-		const savedTheme = localStorage.getItem("theme") || "light";
-		setTheme(savedTheme);
-		document.documentElement.classList.toggle("dark", savedTheme === "dark");
+		const saved = localStorage.getItem("theme") || "light";
+		setTheme(saved);
+		document.documentElement.classList.toggle("dark", saved === "dark");
 	}, []);
 
 	const toggleTheme = () => {
-		const newTheme = theme === "light" ? "dark" : "light";
-		setTheme(newTheme);
-		localStorage.setItem("theme", newTheme);
-		document.documentElement.classList.toggle("dark", newTheme === "dark");
+		const next = theme === "light" ? "dark" : "light";
+		setTheme(next);
+		localStorage.setItem("theme", next);
+		document.documentElement.classList.toggle("dark", next === "dark");
 	};
 
-	return (
-		<ThemeContext.Provider value={{ theme, toggleTheme }}>
-			{children}
-		</ThemeContext.Provider>
-	);
+	return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {
-	const context = useContext(ThemeContext);
-	if (context === undefined) {
-		throw new Error("useTheme must be used within a ThemeProvider");
-	}
-	return context;
+	const ctx = useContext(ThemeContext);
+	if (ctx === undefined) throw new Error("useTheme must be used within a ThemeProvider");
+	return ctx;
 }

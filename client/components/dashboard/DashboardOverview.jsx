@@ -21,36 +21,26 @@ export const DashboardOverview = ({ role, userName }) => {
 	// Base URL for deep links within the dashboard (username encoded for safety)
 	const base = `/dashboard/${role}/${encodeURIComponent(userName || "")}`;
 
-	// Role flags (not strictly required but clarifies intent when used)
+	// Role flags (not strictly required but clarify intent when used for branching)
 	const isAttendee = role === "attendee";
 	const isMhp = role === "mhp";
 	const isAdmin = role === "admin";
 
-	// Reusable class strings to keep JSX tidy (no visual changes)
+	// Class name tokens (centralized for maintainability – ZERO visual change)
 	const wrapperClass = "space-y-8";
-	const heroClass =
-		"bg-gradient-to-r from-indigo-600 to-teal-500 rounded-2xl p-6 sm:p-8 text-white";
+	const heroClass = "bg-gradient-to-r from-indigo-600 to-teal-500 rounded-2xl p-6 sm:p-8 text-white";
 	const heroTitleClass = "text-2xl sm:text-3xl font-bold mb-2";
 	const heroSubtitleClass = "text-indigo-100 text-base sm:text-lg";
-	const statsGridClass =
-		"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 items-stretch";
-	const statCardClass =
-		"h-full p-6 bg-white dark:bg-slate-800 border-0 shadow-lg";
-	const statTitleClass =
-		"text-sm font-medium text-slate-600 dark:text-slate-400";
-	const statValueClass =
-		"text-2xl font-bold text-slate-900 dark:text-white truncate";
-	const quickTitleClass =
-		"text-2xl font-bold text-slate-900 dark:text-white mb-6";
-	const actionsGridClass =
-		"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-stretch";
-	const actionCardClass =
-		"h-full p-6 bg-white dark:bg-slate-800 border-0 shadow-lg hover:shadow-xl transition-shadow flex flex-col";
-	const recentTitleClass =
-		"text-2xl font-bold text-slate-900 dark:text-white mb-6";
+	const statsGridClass = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 items-stretch";
+	const statCardClass = "h-full p-6 bg-white dark:bg-slate-800 border-0 shadow-lg";
+	const statTitleClass = "text-sm font-medium text-slate-600 dark:text-slate-400";
+	const statValueClass = "text-2xl font-bold text-slate-900 dark:text-white truncate";
+	const quickTitleClass = "text-2xl font-bold text-slate-900 dark:text-white mb-6";
+	const actionsGridClass = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-stretch";
+	const actionCardClass = "h-full p-6 bg-white dark:bg-slate-800 border-0 shadow-lg hover:shadow-xl transition-shadow flex flex-col";
+	const recentTitleClass = "text-2xl font-bold text-slate-900 dark:text-white mb-6";
 	const recentCardClass = "p-6 bg-white dark:bg-slate-800 border-0 shadow-lg";
-	const recentRowBase =
-		"flex items-center space-x-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg";
+	const recentRowBase = "flex items-center space-x-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg";
 
 	// Static dashboard data per role (kept exactly as before)
 	const stats = {
@@ -230,26 +220,27 @@ export const DashboardOverview = ({ role, userName }) => {
 	const currentActions = quickActions[role] || quickActions.attendee;
 
 	return (
-		<div className={wrapperClass}>
+		<div className={wrapperClass} aria-labelledby="dashboard-welcome-heading">
 			{/* Welcome Section */}
 			<div className={heroClass}>
-				<h1 className={heroTitleClass}>Welcome back, {userName}! 👋</h1>
+				<h1 id="dashboard-welcome-heading" className={heroTitleClass}>
+					Welcome back, {userName}! <span aria-hidden="true">👋</span>
+				</h1>
 				<p className={heroSubtitleClass}>
-					Ready to continue your mental health journey? Here&apos;s what&apos;s
-					happening today.
+					Ready to continue your mental health journey? Here&apos;s what&apos;s happening today.
 				</p>
 			</div>
 
 			{/* Stats Grid */}
-			<div className={statsGridClass}>
+			<div className={statsGridClass} role="list" aria-label="High level statistics">
 				{currentStats.map((stat, index) => (
-					<Card key={index} className={statCardClass}>
+					<Card key={index} className={statCardClass} role="listitem">
 						<div className="flex items-center justify-between h-full">
 							<div className="min-w-0">
 								<p className={statTitleClass}>{stat.title}</p>
 								<p className={statValueClass}>{stat.value}</p>
 							</div>
-							<div className={`p-3 rounded-lg ${stat.bgColor}`}>
+							<div className={`p-3 rounded-lg ${stat.bgColor}`} aria-hidden="true">
 								<div className={stat.color}>{stat.icon}</div>
 							</div>
 						</div>
@@ -258,28 +249,22 @@ export const DashboardOverview = ({ role, userName }) => {
 			</div>
 
 			{/* Quick Actions */}
-			<div>
-				<h2 className={quickTitleClass}>Quick Actions</h2>
-				<div className={actionsGridClass}>
+			<div aria-labelledby="quick-actions-heading">
+				<h2 id="quick-actions-heading" className={quickTitleClass}>Quick Actions</h2>
+				<div className={actionsGridClass} role="list" aria-label="Available quick actions">
 					{currentActions.map((action, index) => (
-						<Card key={index} className={actionCardClass}>
+						<Card key={index} className={actionCardClass} role="listitem">
 							<div className="flex items-start justify-between mb-4">
-								<div className={`p-3 rounded-lg ${action.color} text-white`}>
+								<div className={`p-3 rounded-lg ${action.color} text-white`} aria-hidden="true">
 									{action.icon}
 								</div>
-								<ArrowRight className="w-5 h-5 text-slate-400" />
+								<ArrowRight className="w-5 h-5 text-slate-400" aria-hidden="true" />
 							</div>
-							<h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-								{action.title}
-							</h3>
-							<p className="text-slate-600 dark:text-slate-400 mb-4">
-								{action.description}
-							</p>
+							<h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">{action.title}</h3>
+							<p className="text-slate-600 dark:text-slate-400 mb-4">{action.description}</p>
 							<div className="mt-auto">
-								<Link href={action.href}>
-									<Button className={`w-full ${action.color} text-white`}>
-										Get Started
-									</Button>
+								<Link href={action.href} aria-label={`${action.title} - ${action.description}`}>
+									<Button className={`w-full ${action.color} text-white`}>Get Started</Button>
 								</Link>
 							</div>
 						</Card>
@@ -288,47 +273,35 @@ export const DashboardOverview = ({ role, userName }) => {
 			</div>
 
 			{/* Recent Activity */}
-			<div>
-				<h2 className={recentTitleClass}>Recent Activity</h2>
+			<div aria-labelledby="recent-activity-heading">
+				<h2 id="recent-activity-heading" className={recentTitleClass}>Recent Activity</h2>
 				<Card className={recentCardClass}>
-					<div className="space-y-4">
-						<div className={recentRowBase}>
-							<div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+					<div className="space-y-4" role="list" aria-label="Recent events">
+						<div className={recentRowBase} role="listitem">
+							<div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center" aria-hidden="true">
 								<Calendar className="w-5 h-5 text-blue-600" />
 							</div>
 							<div className="flex-1">
-								<p className="font-medium text-slate-900 dark:text-white">
-									Session scheduled for tomorrow
-								</p>
-								<p className="text-sm text-slate-600 dark:text-slate-400">
-									2 hours ago
-								</p>
+								<p className="font-medium text-slate-900 dark:text-white">Session scheduled for tomorrow</p>
+								<p className="text-sm text-slate-600 dark:text-slate-400">2 hours ago</p>
 							</div>
 						</div>
-						<div className={recentRowBase}>
-							<div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+						<div className={recentRowBase} role="listitem">
+							<div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center" aria-hidden="true">
 								<TrendingUp className="w-5 h-5 text-green-600" />
 							</div>
 							<div className="flex-1">
-								<p className="font-medium text-slate-900 dark:text-white">
-									Mood logged: Feeling good (8/10)
-								</p>
-								<p className="text-sm text-slate-600 dark:text-slate-400">
-									4 hours ago
-								</p>
+								<p className="font-medium text-slate-900 dark:text-white">Mood logged: Feeling good (8/10)</p>
+								<p className="text-sm text-slate-600 dark:text-slate-400">4 hours ago</p>
 							</div>
 						</div>
-						<div className={recentRowBase}>
-							<div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
+						<div className={recentRowBase} role="listitem">
+							<div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center" aria-hidden="true">
 								<BookOpen className="w-5 h-5 text-purple-600" />
 							</div>
 							<div className="flex-1">
-								<p className="font-medium text-slate-900 dark:text-white">
-									New resource available: &ldquo;Managing Anxiety&rdquo;
-								</p>
-								<p className="text-sm text-slate-600 dark:text-slate-400">
-									1 day ago
-								</p>
+								<p className="font-medium text-slate-900 dark:text-white">New resource available: &ldquo;Managing Anxiety&rdquo;</p>
+								<p className="text-sm text-slate-600 dark:text-slate-400">1 day ago</p>
 							</div>
 						</div>
 					</div>
