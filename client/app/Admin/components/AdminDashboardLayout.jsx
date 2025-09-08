@@ -164,6 +164,8 @@ const NAV_ITEMS = {
 	],
 };
 
+// Admin dashboard layout shell with sidebar and role-dependent sections.
+// Refactor additions: skip link for accessibility, nav landmark semantics, aria-current handling.
 export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 	const router = useRouter();
 	const [activeSection, setActiveSection] = useState(getInitialSection(role));
@@ -225,8 +227,9 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 
 	return (
 		<div className="flex min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 overflow-x-hidden">
+			<a href="#admin-main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 z-50 bg-indigo-600 text-white px-4 py-2 rounded">Skip to main content</a>
 			{/* Sidebar */}
-			<aside className="w-64 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-r border-slate-200/60 dark:border-slate-700/60 p-6 sticky top-0 h-dvh shadow-xl overflow-y-auto no-scrollbar">
+			<aside className="w-64 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-r border-slate-200/60 dark:border-slate-700/60 p-6 sticky top-0 h-dvh shadow-xl overflow-y-auto no-scrollbar" aria-label="Admin sidebar navigation">
 				<div className="mb-8 p-4 bg-indigo-50/50 rounded-xl">
 					<div className="flex items-center justify-between gap-3">
 						<div>
@@ -240,7 +243,7 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 						<ThemeToggle />
 					</div>
 				</div>
-				<nav>
+				<nav role="navigation">
 					<ul className="space-y-1">
 						{navItems.map((item) => {
 							const isActive = activeSection === item.section;
@@ -254,6 +257,8 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 												? "bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg"
 												: "text-slate-600 hover:bg-indigo-50/50 hover:translate-x-2"
 										}`}
+										aria-current={isActive ? "page" : undefined}
+										aria-label={item.name + (isActive ? " (current section)" : "")}
 									>
 										<span className={`mr-3 ${isActive ? "text-white" : "text-indigo-400"}`}>
 											{item.icon}
