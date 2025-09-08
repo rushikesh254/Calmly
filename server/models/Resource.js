@@ -1,18 +1,18 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-// Educational or supportive content authored by an MHP.
-// Supports either article body content or an external/video URL.
+// Educational / supportive resource created by a professional.
+// Either long-form article content or a video/media reference.
 const resourceSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  headline: { type: String },                // Optional short summary
-  type: { type: String, enum: ['article', 'video'], required: true },
-  content: { type: String },                 // Article text (if type=article)
-  mediaUrl: { type: String },                // Video URL (if type=video)
-  categories: [{ type: String }],            // Thematic tags
-  mhpEmail: { type: String, required: true },// Author reference (email)
-  mhpName: { type: String },                 // Denormalized for quick display
+  title: { type: String, required: true, trim: true },
+  headline: { type: String, trim: true }, // Short summary
+  type: { type: String, enum: ["article", "video"], required: true },
+  content: { type: String }, // If article
+  mediaUrl: { type: String }, // If video
+  categories: [{ type: String }], // Tags for filtering
+  mhpEmail: { type: String, required: true, lowercase: true, trim: true }, // Author email
+  mhpName: { type: String, trim: true }, // Denormalized display name
   createdAt: { type: Date, default: Date.now },
 });
 
-const Resource = mongoose.model('Resource', resourceSchema);
+const Resource = mongoose.model("Resource", resourceSchema);
 export default Resource;

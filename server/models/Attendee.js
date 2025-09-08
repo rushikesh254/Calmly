@@ -1,16 +1,22 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-// Platform end user (attendee) account information.
-// Only core profile + auth related fields are stored here.
+// End user (attendee) profile + authentication fields.
+// Keep minimal. Extended profile data should live in separate docs if needed.
 const attendeeSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  email: { type: String, required: true, unique: true }, // Unique login identity
+  username: { type: String, required: true, trim: true },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
   password: { type: String, required: true }, // Hashed password
-  address: { type: String, default: '' },
-  phoneNumber: { type: String, default: '' },
+  address: { type: String, default: "", trim: true },
+  phoneNumber: { type: String, default: "" },
   age: { type: Number },
-  sex: { type: String }, // Free-form; could be normalized later
+  sex: { type: String }, // Free-form; consider normalizing later
 });
 
-const Attendee = mongoose.model('Attendee', attendeeSchema);
+const Attendee = mongoose.model("Attendee", attendeeSchema);
 export default Attendee;

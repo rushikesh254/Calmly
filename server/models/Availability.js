@@ -1,19 +1,25 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-// Represents a single availability slot for a mental health professional (MHP).
-// date + startTime uniqueness per professional prevents double booking.
+// A single availability slot for a mental health professional (MHP).
+// Uniqueness on professional + date + start time avoids double booking.
 const availabilitySchema = new mongoose.Schema({
-	professionalId: { type: mongoose.Schema.Types.ObjectId, ref: 'MHP', required: true },
-	date: { type: String, required: true },      // Format: YYYY-MM-DD
-	startTime: { type: String, required: true }, // Format: HH:MM (24h)
-	endTime: { type: String, required: true },
-	isBooked: { type: Boolean, default: false },
-	bookedAt: { type: Date },                    // Timestamp when booked
-	createdAt: { type: Date, default: Date.now },
+  professionalId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "MHP",
+    required: true,
+  },
+  date: { type: String, required: true }, // YYYY-MM-DD
+  startTime: { type: String, required: true }, // HH:MM (24h)
+  endTime: { type: String, required: true },
+  isBooked: { type: Boolean, default: false },
+  bookedAt: { type: Date }, // Set when a booking occurs
+  createdAt: { type: Date, default: Date.now },
 });
 
-// Fast lookup + prevent duplicate slot creation per professional.
-availabilitySchema.index({ professionalId: 1, date: 1, startTime: 1 }, { unique: true });
+availabilitySchema.index(
+  { professionalId: 1, date: 1, startTime: 1 },
+  { unique: true }
+);
 
-const Availability = mongoose.model('Availability', availabilitySchema);
+const Availability = mongoose.model("Availability", availabilitySchema);
 export default Availability;

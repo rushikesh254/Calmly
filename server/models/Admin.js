@@ -1,14 +1,20 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-// Admin users who manage platform operations.
-// Keep schema minimal; auth & role-based access handled elsewhere.
+// Admin account for managing platform operations.
+// Only core identity + role are stored here; permissions handled elsewhere.
 const adminSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }, // Hashed password
-  role: { type: String, enum: ['general-admin', 'mh-admin'], required: true },
+  name: { type: String, required: true, trim: true },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
+  password: { type: String, required: true }, // Hashed password (never store plain text)
+  role: { type: String, enum: ["general-admin", "mh-admin"], required: true },
 });
 
-// Single point of export for consistency across codebase.
-const Admin = mongoose.model('Admin', adminSchema);
+// Centralized model export.
+const Admin = mongoose.model("Admin", adminSchema);
 export default Admin;
