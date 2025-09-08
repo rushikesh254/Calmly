@@ -1,9 +1,7 @@
-"use client";
-
+"use client"; // Motion + interactions.
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Heart, User, Stethoscope } from "lucide-react";
-
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Card } from "@/components/ui/card";
 
