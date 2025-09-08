@@ -15,6 +15,14 @@ export function MHPRequest() {
 	const [showStatusModal, setShowStatusModal] = useState(false);
 	const [modalContent, setModalContent] = useState({ status: "", message: "" });
 
+	// Auto-dismiss success / rejection notifications; keep error until user closes.
+	useEffect(() => {
+		if (!showStatusModal) return;
+		if (modalContent.status === "error") return;
+		const t = setTimeout(() => setShowStatusModal(false), 2500);
+		return () => clearTimeout(t);
+	}, [showStatusModal, modalContent.status]);
+
 	// -------------------- Constants --------------------
 	const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 	const DECISION = { APPROVE: "approved", REJECT: "rejected" };
@@ -58,8 +66,7 @@ export function MHPRequest() {
 
 			setModalContent({ status: decision, message: `Request has been ${decision} successfully` });
 			setShowStatusModal(true);
-			setPendingMHPs(pendingMHPs.filter((mhp) => mhp.username !== safeUserName && mhp.userName !== safeUserName));
-			setTimeout(() => { window.location.reload(); }, 2500);
+			setPendingMHPs((prev) => prev.filter((mhp) => (mhp.username || mhp.userName) !== safeUserName));
 		} catch (err) {
 			setModalContent({ status: "error", message: err.message || "Failed to process request" });
 			setShowStatusModal(true);
@@ -98,46 +105,54 @@ export function MHPRequest() {
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 			{/* Status Modal */}
 			{showStatusModal && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-					<div className="bg-white rounded-xl w-full max-w-md flex flex-col shadow-xl">
+				<div
+					className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+					role="dialog"
+					aria-modal="true"
+					aria-labelledby="mhp-status-title"
+				>
+					<div className="bg-white rounded-xl w-full max-w-md flex flex-col shadow-xl" role="document">
 						<div
 							className={`p-6 border-b flex justify-between items-center ${
 								modalContent.status === DECISION.APPROVE
 									? "bg-green-50"
-									: modalContent.status === DECISION.REJECT
-									? "bg-red-50"
-									: "bg-indigo-50"
+								: modalContent.status === DECISION.REJECT
+								? "bg-red-50"
+								: modalContent.status === "error"
+								? "bg-red-50"
+								: "bg-indigo-50"
 							}`}
+							id="mhp-status-title"
 						>
 							<h2 className="text-xl font-bold pr-4">
 								{modalContent.status === DECISION.APPROVE && "Approval Successful"}
 								{modalContent.status === DECISION.REJECT && "Rejection Successful"}
 								{modalContent.status === "error" && "Error Occurred"}
 							</h2>
-							<button onClick={() => setShowStatusModal(false)} className="text-gray-500 hover:text-gray-700 shrink-0">
+							<button onClick={() => setShowStatusModal(false)} className="text-gray-500 hover:text-gray-700 shrink-0" aria-label="Close status dialog">
 								<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
 								</svg>
 							</button>
 						</div>
-						<div className="p-6">
+						<div className="p-6" aria-live="assertive">
 							<div className="flex flex-col items-center text-center space-y-4">
 								{modalContent.status === DECISION.APPROVE && (
-									<div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+									<div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center" aria-hidden="true">
 										<svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
 										</svg>
 									</div>
 								)}
 								{modalContent.status === DECISION.REJECT && (
-									<div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+									<div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center" aria-hidden="true">
 										<svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
 										</svg>
 									</div>
 								)}
 								{modalContent.status === "error" && (
-									<div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+									<div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center" aria-hidden="true">
 										<svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
 										</svg>

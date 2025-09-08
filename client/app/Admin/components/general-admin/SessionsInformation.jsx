@@ -152,15 +152,17 @@ export const SessionsInformation = () => {
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 			{/* Session Details Modal */}
 			{selectedSession && (
-				<div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+				<div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="session-details-title">
 					<div className="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full shadow-xl overflow-hidden m-4 border border-slate-200/60 dark:border-slate-800">
 						<div className="p-6 bg-indigo-50 dark:bg-slate-800 flex justify-between items-center">
-							<h3 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+							<h3 id="session-details-title" className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
 								Session Details
 							</h3>
 							<button
 								onClick={closeModal}
-								className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+								className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+								aria-label="Close session details dialog"
+							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									className="h-6 w-6"

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 /**
  * Resource creation form for MH Admin / MHP users.
@@ -16,7 +16,9 @@ export const Resources = ({ userName, email }) => {
 	const [video, setVideo] = useState(null);
 	const [categories, setCategories] = useState([]);
 	const [uploading, setUploading] = useState(false);
-	const [message, setMessage] = useState("");
+	// message: { text: string, type: 'success' | 'error' }
+	const [message, setMessage] = useState(null);
+	const dismissTimerRef = useRef(null);
 
 	// -------------------- Constants --------------------
 	const API_BASE = process.env.NEXT_PUBLIC_API_URL;
@@ -40,18 +42,30 @@ export const Resources = ({ userName, email }) => {
 	// -------------------- Handlers --------------------
 	const handleVideoChange = (e) => setVideo(e.target.files[0] || null);
 
+	// Auto-dismiss success notifications after 4s
+	useEffect(() => {
+		if (message?.type === 'success') {
+			dismissTimerRef.current && clearTimeout(dismissTimerRef.current);
+			dismissTimerRef.current = setTimeout(() => setMessage(null), 4000);
+		}
+		return () => {
+			if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
+		};
+	}, [message]);
+
 	const toggleCategory = (value) =>
 		setCategories((prev) => (prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]));
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setUploading(true);
+		setMessage(null);
 		try {
 			const token =
 				(typeof window !== "undefined" && localStorage.getItem("accessToken")) ||
 				(typeof window !== "undefined" && localStorage.getItem("token"));
 			if (!token) {
-				setMessage("Sign in required. Please log in as admin or MHP.");
+				setMessage({ type: 'error', text: 'Sign in required. Please log in as admin or MHP.' });
 				return;
 			}
 
@@ -100,7 +114,7 @@ export const Resources = ({ userName, email }) => {
 			});
 
 			if (resourceRes.ok) {
-				setMessage("Resource added successfully!");
+				setMessage({ type: 'success', text: 'Resource added successfully!' });
 				// reset form
 				setTitle("");
 				setHeadline("");
@@ -110,10 +124,10 @@ export const Resources = ({ userName, email }) => {
 				setCategories([]);
 			} else {
 				const err = await resourceRes.json().catch(() => null);
-				setMessage(err?.error || err?.message || "Failed to add resource.");
+				setMessage({ type: 'error', text: err?.error || err?.message || 'Failed to add resource.' });
 			}
 		} catch (err) {
-			setMessage(err?.message || "Failed to add resource.");
+			setMessage({ type: 'error', text: err?.message || 'Failed to add resource.' });
 		} finally {
 			setUploading(false);
 		}
@@ -122,12 +136,14 @@ export const Resources = ({ userName, email }) => {
 	// -------------------- Render --------------------
 	return (
 		<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			{/* Live region for announcements */}
+			<div aria-live="polite" className="sr-only">{message?.text || ''}</div>
 			<div className="mb-8 text-center">
 				<h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent mb-2">Upload New Resource</h1>
 				<p className="text-gray-600">Share mental health resources with your patients</p>
 			</div>
 
-			<form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 space-y-6">
+			<form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 space-y-6" noValidate>
 				<div>
 					<label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
 					<input
@@ -209,6 +225,7 @@ export const Resources = ({ userName, email }) => {
 								key={cat}
 								type="button"
 								onClick={() => toggleCategory(cat)}
+								aria-pressed={categories.includes(cat)}
 								className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
 									categories.includes(cat) ? "bg-indigo-600 text-white" : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
 								}`}
@@ -239,11 +256,24 @@ export const Resources = ({ userName, email }) => {
 
 				{message && (
 					<div
-						className={`mt-4 p-4 rounded-xl text-sm ${
-							message.includes("success") ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+						role={message.type === 'error' ? 'alert' : 'status'}
+						className={`mt-4 p-4 rounded-xl text-sm flex items-start gap-3 border ${
+							message.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
 						}`}
 					>
-						{message}
+						<svg className="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+							{message.type === 'success' ? (
+								<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8.25 8.25a1 1 0 01-1.414 0l-3.5-3.5a1 1 0 011.414-1.414l2.793 2.793 7.543-7.543a1 1 0 011.414 0z" clipRule="evenodd" />
+							) : (
+								<path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.5a.75.75 0 001.5 0v-4.5zM10 13.5a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" />
+							)}
+						</svg>
+						<p className="flex-1">{message.text}</p>
+						<button onClick={() => setMessage(null)} aria-label="Dismiss message" className="text-gray-500 hover:text-gray-700">
+							<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+							</svg>
+						</button>
 					</div>
 				)}
 			</form>

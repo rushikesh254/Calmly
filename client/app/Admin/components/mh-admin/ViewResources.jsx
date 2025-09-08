@@ -13,7 +13,11 @@ export const ViewResources = () => {
 	const [categoryFilter, setCategoryFilter] = useState("");
 	const [selectedArticle, setSelectedArticle] = useState(null);
 	const [deletingResourceId, setDeletingResourceId] = useState(null);
+	// Inline feedback message { type: 'success' | 'error', text: string }
+	const [feedback, setFeedback] = useState(null);
 	const contentRef = useRef(null);
+	const firstDialogButtonRef = useRef(null); // focus target when dialog opens
+	const previousFocusRef = useRef(null); // to restore focus after closing dialogs
 
 	const availableCategories = [
 		"Stress Management",
@@ -57,6 +61,28 @@ export const ViewResources = () => {
 		}
 	}, [selectedArticle]);
 
+	// Manage focus when any dialog (article or delete confirm) opens
+	useEffect(() => {
+		const dialogOpen = selectedArticle || deletingResourceId;
+		if (dialogOpen) {
+			previousFocusRef.current = document.activeElement;
+			setTimeout(() => {
+				firstDialogButtonRef.current?.focus();
+			}, 0);
+		} else if (!dialogOpen && previousFocusRef.current) {
+			// restore focus when dialog closes
+			(previousFocusRef.current instanceof HTMLElement) && previousFocusRef.current.focus();
+		}
+	}, [selectedArticle, deletingResourceId]);
+
+	// Auto dismiss success feedback while retaining errors for manual dismissal
+	useEffect(() => {
+		if (feedback?.type === 'success') {
+			const t = setTimeout(() => setFeedback(null), 4000);
+			return () => clearTimeout(t);
+		}
+	}, [feedback]);
+
 	const handleConfirmDelete = async () => {
 		try {
 			const response = await fetch(
@@ -72,13 +98,14 @@ export const ViewResources = () => {
 			if (response.ok) {
 				setResources(resources.filter((resource) => resource._id !== deletingResourceId));
 				setDeletingResourceId(null);
+				setFeedback({ type: 'success', text: 'Resource deleted.' });
 			} else {
-				alert(result.message || "Failed to delete resource.");
+				setFeedback({ type: 'error', text: result.message || 'Failed to delete resource.' });
 				setDeletingResourceId(null);
 			}
 		} catch (err) {
-			alert("An error occurred while deleting.");
 			console.error("Delete error", err);
+			setFeedback({ type: 'error', text: 'An unexpected error occurred while deleting.' });
 			setDeletingResourceId(null);
 		}
 	};
@@ -87,17 +114,69 @@ export const ViewResources = () => {
 
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			{/* Live region for inline feedback */}
+			<div aria-live="polite" className="sr-only">
+				{feedback?.text || ''}
+			</div>
+
+			{feedback && (
+				<div
+					className={`mb-6 flex items-start gap-3 p-4 rounded-lg text-sm border ${feedback.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}
+					role={feedback.type === 'error' ? 'alert' : 'status'}
+				>
+					<svg
+						className="h-5 w-5 mt-0.5 flex-shrink-0"
+						viewBox="0 0 20 20"
+						fill="currentColor"
+						aria-hidden="true"
+					>
+						{feedback.type === 'success' ? (
+							<path
+								fillRule="evenodd"
+								d="M16.707 5.293a1 1 0 010 1.414l-8.25 8.25a1 1 0 01-1.414 0l-3.5-3.5a1 1 0 011.414-1.414l2.793 2.793 7.543-7.543a1 1 0 011.414 0z"
+								clipRule="evenodd"
+							/>
+						) : (
+							<path
+								fillRule="evenodd"
+								d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.5a.75.75 0 001.5 0v-4.5zM10 13.5a1 1 0 100 2 1 1 0 000-2z"
+								clipRule="evenodd"
+							/>
+						)}
+					</svg>
+					<p className="flex-1">{feedback.text}</p>
+					<button
+						onClick={() => setFeedback(null)}
+						className="text-gray-500 hover:text-gray-700"
+						aria-label="Dismiss message"
+						ref={firstDialogButtonRef}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="h-4 w-4"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+						</svg>
+					</button>
+				</div>
+			)}
 			{/* Article Modal */}
 			{selectedArticle && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+				<div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="article-dialog-title">
 					<div className="bg-white rounded-xl w-full max-w-3xl max-h-[90dvh] flex flex-col shadow-xl">
 						<div className="p-6 border-b border-gray-100 flex justify-between items-center bg-indigo-50 sticky top-0">
-							<h2 className="text-2xl font-bold text-indigo-600 pr-4">
+							<h2 id="article-dialog-title" className="text-2xl font-bold text-indigo-600 pr-4">
 								{selectedArticle.title}
 							</h2>
 							<button
+								ref={firstDialogButtonRef}
 								onClick={() => setSelectedArticle(null)}
-								className="text-gray-500 hover:text-gray-700 shrink-0">
+								className="text-gray-500 hover:text-gray-700 shrink-0"
+								aria-label="Close article dialog"
+							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									className="h-6 w-6"
@@ -109,8 +188,8 @@ export const ViewResources = () => {
 										strokeLinejoin="round"
 										strokeWidth={2}
 										d="M6 18L18 6M6 6l12 12"
-									/>
-								</svg>
+										/>
+									</svg>
 							</button>
 						</div>
 						<div className="p-6 overflow-y-auto" ref={contentRef}>
@@ -137,15 +216,18 @@ export const ViewResources = () => {
 
 			{/* Delete Confirmation Modal */}
 			{deletingResourceId && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+				<div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="delete-dialog-title">
 					<div className="bg-white rounded-xl w-full max-w-md flex flex-col shadow-xl">
 						<div className="p-6 border-b border-gray-100 flex justify-between items-center bg-red-50 sticky top-0">
-							<h2 className="text-xl font-bold text-red-600 pr-4">
+							<h2 id="delete-dialog-title" className="text-xl font-bold text-red-600 pr-4">
 								Confirm Deletion
 							</h2>
 							<button
+								ref={firstDialogButtonRef}
 								onClick={() => setDeletingResourceId(null)}
-								className="text-gray-500 hover:text-gray-700 shrink-0">
+								className="text-gray-500 hover:text-gray-700 shrink-0"
+								aria-label="Close delete dialog"
+							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									className="h-6 w-6"
@@ -157,8 +239,8 @@ export const ViewResources = () => {
 										strokeLinejoin="round"
 										strokeWidth={2}
 										d="M6 18L18 6M6 6l12 12"
-									/>
-								</svg>
+										/>
+									</svg>
 							</button>
 						</div>
 						<div className="p-6">
@@ -169,14 +251,16 @@ export const ViewResources = () => {
 							<div className="flex justify-end gap-3">
 								<button
 									onClick={() => setDeletingResourceId(null)}
-									className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium rounded-lg border border-gray-200 hover:bg-gray-50">
+									className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium rounded-lg border border-gray-200 hover:bg-gray-50"
+								>
 									Cancel
-								</button>
+									</button>
 								<button
 									onClick={handleConfirmDelete}
-									className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">
+									className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
+								>
 									Delete Permanently
-								</button>
+									</button>
 							</div>
 						</div>
 					</div>
