@@ -1,5 +1,5 @@
-"use client";
-import { useState, useEffect } from "react";
+"use client"; // Attendee sessions list – adds a11y + naming clarity, preserves behavior
+import { useState, useEffect, useMemo } from "react";
 import { SessionCard } from "@/components/dashboard/attendee/SessionCard";
 
 export const Sessions = ({ email }) => {
@@ -21,24 +21,13 @@ export const Sessions = ({ email }) => {
 		const loadSessions = async () => {
 			try {
 				const authToken = localStorage.getItem("token");
-				const response = await fetch(
-					`${
-						process.env.NEXT_PUBLIC_API_URL
-					}/api/sessions/attendee?attendee_email=${encodeURIComponent(email)}`,
-					{
-						headers: {
-							Authorization: authToken ? `Bearer ${authToken}` : "",
-						},
-					}
-				);
-				if (!response.ok) {
-					throw new Error("Failed to fetch sessions");
-				}
+				const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sessions/attendee?attendee_email=${encodeURIComponent(email)}`, {
+					headers: { Authorization: authToken ? `Bearer ${authToken}` : "" },
+				});
+				if (!response.ok) throw new Error("Failed to fetch sessions");
 				const payload = await response.json();
-				const sortedSessions = payload.sort(
-					(a, b) => new Date(b.session_date) - new Date(a.session_date)
-				);
-				setAllSessions(sortedSessions);
+				const sorted = payload.sort((a, b) => new Date(b.session_date) - new Date(a.session_date));
+				setAllSessions(sorted);
 				setErrorMessage("");
 			} catch (e) {
 				setErrorMessage("Unable to load sessions");
@@ -47,10 +36,7 @@ export const Sessions = ({ email }) => {
 		loadSessions();
 	}, [email]);
 
-	const visibleSessions = allSessions.filter(
-		(session) =>
-			statusFilter === "all" || session.session_status === statusFilter
-	);
+	const visibleSessions = useMemo(() => allSessions.filter(s => statusFilter === "all" || s.session_status === statusFilter), [allSessions, statusFilter]);
 
 	return (
 		<section id="sessions" className="mb-12">
@@ -78,7 +64,7 @@ export const Sessions = ({ email }) => {
 			</div>
 
 			{errorMessage ? (
-				<p className="text-red-500">{errorMessage}</p>
+				<p className="text-red-500" role="alert" aria-live="polite">{errorMessage}</p>
 			) : visibleSessions.length === 0 ? (
 				<div className="p-6 rounded-xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">
 					No sessions at the moment.

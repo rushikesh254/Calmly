@@ -15,15 +15,15 @@ import {
 } from "recharts";
 
 const MoodLog = () => {
-	const [mood, setMood] = useState(5);
+	const [mood, setMood] = useState(5); // slider value 1–10
 	const [note, setNote] = useState("");
 	const [moodHistory, setMoodHistory] = useState([]);
 	const [moodStats, setMoodStats] = useState(null);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(false); // history loading
 	const [submitting, setSubmitting] = useState(false);
 	const [showForm, setShowForm] = useState(false);
 	const [authMissing, setAuthMissing] = useState(false);
-	const [error, setError] = useState("");
+	const [error, setError] = useState(""); // generic fetch/save errors
 
 	const getToken = () => {
 		if (typeof window === "undefined") return null;
@@ -49,7 +49,7 @@ const MoodLog = () => {
 	useEffect(() => {
 		fetchMoodHistory();
 		fetchMoodStats();
-	}, []);
+	}, []); // initial hydration
 
 	const fetchMoodHistory = async () => {
 		try {
@@ -141,14 +141,7 @@ const MoodLog = () => {
 		}
 	};
 
-	const formatDate = (dateString) => {
-		return new Date(dateString).toLocaleDateString("en-US", {
-			month: "short",
-			day: "numeric",
-			hour: "2-digit",
-			minute: "2-digit",
-		});
-	};
+	const formatDate = (dateString) => new Date(dateString).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
 	return (
 		<div className="space-y-6">
@@ -197,14 +190,7 @@ const MoodLog = () => {
 							</Label>
 							<div className="flex items-center gap-4">
 								<div className="flex-1">
-									<input
-										type="range"
-										min="1"
-										max="10"
-										value={mood}
-										onChange={(e) => setMood(parseInt(e.target.value))}
-										className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-									/>
+									<input type="range" min="1" max="10" value={mood} onChange={(e) => setMood(parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider" aria-valuemin={1} aria-valuemax={10} aria-valuenow={mood} aria-label="Mood level" />
 								</div>
 								<div className="flex items-center gap-2">
 									<span className="text-2xl">{moodConfig[mood]?.emoji}</span>
@@ -391,7 +377,7 @@ const MoodLog = () => {
 			</Card>
 
 			{error && !authMissing && (
-				<div className="text-sm text-red-600">{error}</div>
+				<div className="text-sm text-red-600" role="alert" aria-live="polite">{error}</div>
 			)}
 		</div>
 	);

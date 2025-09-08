@@ -1,11 +1,8 @@
-"use client";
+"use client"; // Journal CRUD – UI preserved, readability & a11y improved
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
-const getAuthToken = () =>
-	(typeof window !== "undefined" &&
-		(localStorage.getItem("token") || localStorage.getItem("accessToken"))) ||
-	null;
+const getAuthToken = () => (typeof window !== "undefined" ? (localStorage.getItem("token") || localStorage.getItem("accessToken")) : null);
 
 export default function Journal() {
 	const [entries, setEntries] = useState([]);
@@ -14,6 +11,9 @@ export default function Journal() {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 	const [editingId, setEditingId] = useState(null);
+	const [pendingDeleteId, setPendingDeleteId] = useState(null); // id awaiting confirmation
+	const dialogCloseBtnRef = useRef(null);
+	const lastFocusedRef = useRef(null);
 
 	const inputClass =
 		"w-full px-4 py-2 rounded-lg border border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-indigo-500/40";
@@ -52,7 +52,7 @@ export default function Journal() {
 
 	useEffect(() => {
 		fetchEntries();
-	}, []);
+	}, []); // initial load
 
 	const resetForm = () => {
 		setTitle("");
@@ -92,23 +92,36 @@ export default function Journal() {
 		setContent(entry.content || "");
 	};
 
-	const handleDelete = async (id) => {
-		if (!confirm("Delete this entry?")) return;
+	const handleDeleteConfirmed = async () => {
+		if (!pendingDeleteId) return;
 		try {
 			const token = getAuthToken();
 			if (!token) throw new Error("Sign in required.");
 			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/journal/${id}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/api/journal/${pendingDeleteId}`,
 				{ method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
 			);
 			if (!res.ok) {
 				const data = await res.json();
 				throw new Error(data.error || "Failed to delete");
 			}
+			setPendingDeleteId(null);
 			fetchEntries();
 		} catch (e) {
 			setErrorMessage(e.message || "Failed to delete");
+			setPendingDeleteId(null);
 		}
+	};
+
+	const requestDelete = (id) => {
+		lastFocusedRef.current = document.activeElement;
+		setPendingDeleteId(id);
+		setTimeout(() => dialogCloseBtnRef.current?.focus(), 0);
+	};
+
+	const closeDialog = () => {
+		setPendingDeleteId(null);
+		(lastFocusedRef.current instanceof HTMLElement) && lastFocusedRef.current.focus();
 	};
 
 	return (
@@ -117,28 +130,13 @@ export default function Journal() {
 				Journal
 			</h2>
 
-			{errorMessage && <div className={errorAlertClass}>{errorMessage}</div>}
+			{errorMessage && <div className={errorAlertClass} role="alert" aria-live="polite">{errorMessage}</div>}
 
 			<form onSubmit={handleSubmit} className="mb-6 space-y-3">
-				<input
-					type="text"
-					placeholder="Title (optional)"
-					value={title}
-					onChange={(e) => setTitle(e.target.value)}
-					className={inputClass}
-				/>
-				<textarea
-					placeholder="Write your thoughts..."
-					value={content}
-					onChange={(e) => setContent(e.target.value)}
-					rows={5}
-					className={textAreaClass}
-					required
-				/>
+				<input type="text" placeholder="Title (optional)" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} aria-label="Entry title" />
+				<textarea placeholder="Write your thoughts..." value={content} onChange={(e) => setContent(e.target.value)} rows={5} className={textAreaClass} required aria-label="Entry content" />
 				<div className="flex gap-2">
-					<button type="submit" className={primaryBtnClass}>
-						{editingId ? "Update Entry" : "Add Entry"}
-					</button>
+					<button type="submit" className={primaryBtnClass} aria-live="polite">{editingId ? "Update Entry" : "Add Entry"}</button>
 					{editingId && (
 						<button
 							type="button"
@@ -179,7 +177,7 @@ export default function Journal() {
 									</button>
 									<button
 										className="px-3 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700"
-										onClick={() => handleDelete(entry._id)}>
+										onClick={() => requestDelete(entry._id)}>
 										Delete
 									</button>
 								</div>
@@ -191,6 +189,32 @@ export default function Journal() {
 					))
 				)}
 			</div>
-		</section>
+
+		{/* Accessible confirmation dialog */}
+		{pendingDeleteId && (
+			<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="journal-delete-title">
+				<div className="bg-white dark:bg-slate-900 rounded-xl shadow-lg max-w-md w-full m-4 border border-slate-200 dark:border-slate-700">
+					<div className="p-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-700">
+						<h3 id="journal-delete-title" className="text-lg font-semibold text-red-600">Delete Entry</h3>
+						<button
+							ref={dialogCloseBtnRef}
+							onClick={closeDialog}
+							className="text-slate-500 hover:text-slate-700"
+							aria-label="Close delete confirmation dialog"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+						</button>
+					</div>
+					<div className="p-5 space-y-4">
+						<p className="text-sm text-slate-600 dark:text-slate-300">Are you sure you want to permanently delete this journal entry? This action cannot be undone.</p>
+						<div className="flex justify-end gap-3 pt-2">
+							<button onClick={closeDialog} className="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium">Cancel</button>
+							<button onClick={handleDeleteConfirmed} className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-semibold">Delete</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		)}
+	</section>
 	);
 }
