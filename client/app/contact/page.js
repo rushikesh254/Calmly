@@ -1,17 +1,9 @@
-"use client";
-// Contact options and urgent support
+"use client"; // Contains interactive elements.
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
-import {
-	ArrowRight,
-	Clock,
-	Heart,
-	Mail,
-	MessageCircle,
-	Phone,
-} from "lucide-react";
+import { ArrowRight, Clock, Heart, Mail, MessageCircle, Phone } from "lucide-react";
 
 export default function Contact() {
 	return (
