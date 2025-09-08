@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Attendee role signup form – keeps UI/behavior, improves clarity & a11y
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -11,45 +11,36 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function AttendeeSignup() {
 	const router = useRouter();
-	const [formData, setFormData] = useState({
-		username: "",
-		email: "",
-		password: "",
-	});
-	const [error, setError] = useState("");
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [isSuccess, setIsSuccess] = useState(false);
+	const [formData, setFormData] = useState({ username: "", email: "", password: "" });
+	const [error, setError] = useState(""); // shown inline above form
+	const [submitting, setSubmitting] = useState(false);
+	const [success, setSuccess] = useState(false);
 
-	const handleChange = (e) => {
-		setFormData({ ...formData, [e.target.name]: e.target.value });
+	// Generic field updater keeps object shape stable
+	const onFieldChange = (e) => {
+		setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 		if (error) setError("");
 	};
 
-	const handleSubmit = async (e) => {
+	// Submit attendee registration then redirect after brief success state
+	const submit = async (e) => {
 		e.preventDefault();
-		setIsSubmitting(true);
+		setSubmitting(true);
 		try {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup/attendee`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(formData),
-				}
-			);
+			const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup/attendee`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(formData),
+			});
 			const data = await res.json();
 			if (!res.ok) throw new Error(data.message || "Signup failed");
-
-			// Handle successful signup
-			setIsSuccess(true);
-			setTimeout(() => {
-				router.push("/signin");
-			}, 1500);
+			setSuccess(true);
+			setTimeout(() => router.push("/signin"), 1500);
 		} catch (err) {
 			setError(err.message);
-			setIsSuccess(false);
+			setSuccess(false);
 		} finally {
-			setIsSubmitting(false);
+			setSubmitting(false);
 		}
 	};
 
@@ -83,12 +74,12 @@ export default function AttendeeSignup() {
 							</div>
 
 							{error && (
-								<div className="py-3 px-4 text-sm border border-red-400/50 bg-red-500/10 dark:bg-red-950/30 dark:border-red-900/40 text-red-700 dark:text-red-300 rounded-lg">
+								<div className="py-3 px-4 text-sm border border-red-400/50 bg-red-500/10 dark:bg-red-950/30 dark:border-red-900/40 text-red-700 dark:text-red-300 rounded-lg" role="alert" aria-live="polite">
 									{error}
 								</div>
 							)}
 
-							<form onSubmit={handleSubmit} className="space-y-6">
+							<form onSubmit={submit} className="space-y-6" noValidate>
 								<div className="space-y-4">
 									<div className="space-y-2">
 										<Label
@@ -96,13 +87,7 @@ export default function AttendeeSignup() {
 											className="text-slate-700 dark:text-slate-300">
 											Username
 										</Label>
-										<Input
-											type="text"
-											name="username"
-											onChange={handleChange}
-											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
-											required
-										/>
+										<Input type="text" name="username" onChange={onFieldChange} className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all" required aria-required="true" />
 									</div>
 
 									<div className="space-y-2">
@@ -111,13 +96,7 @@ export default function AttendeeSignup() {
 											className="text-slate-700 dark:text-slate-300">
 											Email
 										</Label>
-										<Input
-											type="email"
-											name="email"
-											onChange={handleChange}
-											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
-											required
-										/>
+										<Input type="email" name="email" onChange={onFieldChange} className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all" required aria-required="true" />
 									</div>
 
 									<div className="space-y-2">
@@ -126,25 +105,12 @@ export default function AttendeeSignup() {
 											className="text-slate-700 dark:text-slate-300">
 											Password
 										</Label>
-										<Input
-											type="password"
-											name="password"
-											onChange={handleChange}
-											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
-											required
-										/>
+										<Input type="password" name="password" onChange={onFieldChange} className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all" required aria-required="true" />
 									</div>
 								</div>
 
-								<Button
-									type="submit"
-									className="w-full bg-gradient-to-r from-indigo-600 to-teal-500 text-white hover:from-indigo-700 hover:to-teal-600 transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-indigo-200/40"
-									disabled={isSubmitting || isSuccess}>
-									{isSuccess
-										? "Account Created! 🎉"
-										: isSubmitting
-											? "Creating Account..."
-											: "Sign Up"}
+								<Button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-teal-500 text-white hover:from-indigo-700 hover:to-teal-600 transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-indigo-200/40" disabled={submitting || success} aria-busy={submitting} aria-live="polite">
+									{success ? "Account Created! 🎉" : submitting ? "Creating Account..." : "Sign Up"}
 								</Button>
 							</form>
 

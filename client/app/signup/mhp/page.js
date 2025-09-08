@@ -1,4 +1,4 @@
-"use client";
+"use client"; // MHP (professional) signup – refactored for naming & accessibility, behavior unchanged
 
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -12,87 +12,59 @@ import { Menu, X } from "lucide-react";
 
 export default function MHPSignUpPage() {
 	const router = useRouter();
-	const [formValues, setFormValues] = useState({
-		username: "",
-		licenseNumber: "",
-		email: "",
-		password: "",
-	});
-	const [errorMessage, setErrorMessage] = useState("");
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [registrationSuccess, setRegistrationSuccess] = useState(false);
+	const [formData, setFormData] = useState({ username: "", licenseNumber: "", email: "", password: "" });
+	const [error, setError] = useState("");
+	const [submitting, setSubmitting] = useState(false);
+	const [success, setSuccess] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [statusMessage, setStatusMessage] = useState("");
 	const [menuOpen, setMenuOpen] = useState(false);
 
+	// Lock body scroll while slide-over menu is open & support ESC close
 	useEffect(() => {
-		const handleKeyDown = (e) => {
-			if (e.key === "Escape") setMenuOpen(false);
-		};
-		document.addEventListener("keydown", handleKeyDown);
-		if (menuOpen) {
-			document.body.classList.add("overflow-hidden");
-		} else {
-			document.body.classList.remove("overflow-hidden");
-		}
+		const onKey = (e) => e.key === "Escape" && setMenuOpen(false);
+		document.addEventListener("keydown", onKey);
+		document.body.classList.toggle("overflow-hidden", menuOpen);
 		return () => {
-			document.removeEventListener("keydown", handleKeyDown);
+			document.removeEventListener("keydown", onKey);
 			document.body.classList.remove("overflow-hidden");
 		};
 	}, [menuOpen]);
 
-	const handleInputChange = (e) => {
-		setFormValues({ ...formValues, [e.target.name]: e.target.value });
-		if (errorMessage) setErrorMessage("");
+	const onFieldChange = (e) => {
+		setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+		if (error) setError("");
 	};
 
-	const handleFormSubmit = async (e) => {
+	const submit = async (e) => {
 		e.preventDefault();
-		setIsSubmitting(true);
+		setSubmitting(true);
 		try {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup/mhp`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						...formValues,
-						// send legacy field too for backward compatibility server side (will be ignored if not needed)
-						bmdcRegNo: formValues.licenseNumber,
-					}),
-				}
-			);
+			const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup/mhp`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ ...formData, bmdcRegNo: formData.licenseNumber }), // legacy field retained
+			});
 			const data = await res.json();
 			if (!res.ok) throw new Error(data.message || "Registration failed");
-
-			setRegistrationSuccess(true);
+			setSuccess(true);
 			setStatusMessage("Wait for the approval");
 			setModalOpen(true);
-			setTimeout(() => {
-				router.push("/signin");
-			}, 2500);
+			setTimeout(() => router.push("/signin"), 2500);
 		} catch (err) {
-			setErrorMessage(err.message);
-			setRegistrationSuccess(false);
+			setError(err.message);
+			setSuccess(false);
 		} finally {
-			setIsSubmitting(false);
+			setSubmitting(false);
 		}
 	};
 
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 overflow-x-hidden">
 			{modalOpen && (
-				<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-					<div className="p-6 rounded-lg shadow-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/40">
-						<p className="text-center mb-4 text-green-600 dark:text-green-300">
-							{statusMessage}
-						</p>
-						{/* <Button
-              onClick={() => setIsModalOpen(false)}
-              className="w-full bg-green-600 hover:bg-green-700"
-            >
-              Close
-            </Button> */}
+				<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50" role="dialog" aria-modal="true">
+					<div className="p-6 rounded-lg shadow-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/40" role="alert" aria-live="polite">
+						<p className="text-center mb-4 text-green-600 dark:text-green-300">{statusMessage}</p>
 					</div>
 				</div>
 			)}
@@ -121,60 +93,22 @@ export default function MHPSignUpPage() {
 
 
 			{menuOpen && (
-				<div className="fixed inset-0 z-[60]">
-					{/* overlay */}
-					<button
-						aria-label="Close menu"
-						className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-						onClick={() => setMenuOpen(false)}
-					/>
-					{/* panel */}
-					<div className="absolute right-0 top-0 h-full w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-l border-slate-200/60 dark:border-slate-700/60 shadow-2xl p-6 flex flex-col gap-4">
+				<div className="fixed inset-0 z-[60]" role="dialog" aria-modal="true">
+					<button aria-label="Close menu" className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
+					<div className="absolute right-0 top-0 h-full w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-l border-slate-200/60 dark:border-slate-700/60 shadow-2xl p-6 flex flex-col gap-4" role="document">
 						<div className="flex items-center justify-between">
-							<span className="text-lg font-semibold text-slate-700 dark:text-slate-200">
-								Menu
-							</span>
-							<button
-								aria-label="Close"
-								className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setMenuOpen(false)}>
+							<span className="text-lg font-semibold text-slate-700 dark:text-slate-200">Menu</span>
+							<button aria-label="Close" className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" onClick={() => setMenuOpen(false)}>
 								<X className="h-5 w-5 text-slate-700 dark:text-slate-300" />
 							</button>
 						</div>
 						<nav className="flex flex-col gap-2 text-slate-700 dark:text-slate-300">
-							<Link
-								href="/"
-								className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setMenuOpen(false)}>
-								Home
-							</Link>
-							<Link
-								href="/about"
-								className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setMenuOpen(false)}>
-								About
-							</Link>
-							<Link
-								href="/contact"
-								className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setMenuOpen(false)}>
-								Contact
-							</Link>
-							<Link
-								href="/signin"
-								className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setMenuOpen(false)}>
-								Sign in
-							</Link>
-							<Link
-								href="/signup/attendee"
-								className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
-								onClick={() => setMenuOpen(false)}>
-								Attendee Sign Up
-							</Link>
-							<span className="px-3 py-2 rounded-md bg-slate-100/60 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 cursor-default">
-								Professional Sign Up
-							</span>
+							<Link href="/" className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" onClick={() => setMenuOpen(false)}>Home</Link>
+							<Link href="/about" className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" onClick={() => setMenuOpen(false)}>About</Link>
+							<Link href="/contact" className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" onClick={() => setMenuOpen(false)}>Contact</Link>
+							<Link href="/signin" className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" onClick={() => setMenuOpen(false)}>Sign in</Link>
+							<Link href="/signup/attendee" className="px-3 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800" onClick={() => setMenuOpen(false)}>Attendee Sign Up</Link>
+							<span className="px-3 py-2 rounded-md bg-slate-100/60 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 cursor-default">Professional Sign Up</span>
 						</nav>
 					</div>
 				</div>
@@ -194,13 +128,11 @@ export default function MHPSignUpPage() {
 								</p>
 							</div>
 
-							{errorMessage && (
-								<div className="py-3 px-4 text-sm border border-red-400/50 bg-red-500/10 dark:bg-red-950/30 dark:border-red-900/40 text-red-700 dark:text-red-300 rounded-lg">
-									{errorMessage}
-								</div>
+							{error && (
+								<div className="py-3 px-4 text-sm border border-red-400/50 bg-red-500/10 dark:bg-red-950/30 dark:border-red-900/40 text-red-700 dark:text-red-300 rounded-lg" role="alert" aria-live="polite">{error}</div>
 							)}
 
-							<form onSubmit={handleFormSubmit} className="space-y-6">
+							<form onSubmit={submit} className="space-y-6" noValidate>
 								<div className="space-y-4">
 									<div className="space-y-2">
 										<Label
@@ -208,13 +140,7 @@ export default function MHPSignUpPage() {
 											className="text-slate-700 dark:text-slate-300">
 											Username
 										</Label>
-										<Input
-											type="text"
-											name="username"
-											onChange={handleInputChange}
-											required
-											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
-										/>
+										<Input type="text" name="username" onChange={onFieldChange} required aria-required="true" className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all" />
 									</div>
 									<div className="space-y-2">
 										<Label
@@ -222,13 +148,7 @@ export default function MHPSignUpPage() {
 											className="text-slate-700 dark:text-slate-300">
 											License Number
 										</Label>
-										<Input
-											type="text"
-											name="licenseNumber"
-											onChange={handleInputChange}
-											required
-											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
-										/>
+										<Input type="text" name="licenseNumber" onChange={onFieldChange} required aria-required="true" className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all" />
 									</div>
 									<div className="space-y-2">
 										<Label
@@ -236,13 +156,7 @@ export default function MHPSignUpPage() {
 											className="text-slate-700 dark:text-slate-300">
 											Email
 										</Label>
-										<Input
-											type="email"
-											name="email"
-											onChange={handleInputChange}
-											required
-											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
-										/>
+										<Input type="email" name="email" onChange={onFieldChange} required aria-required="true" className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all" />
 									</div>
 									<div className="space-y-2">
 										<Label
@@ -250,25 +164,12 @@ export default function MHPSignUpPage() {
 											className="text-slate-700 dark:text-slate-300">
 											Password
 										</Label>
-										<Input
-											type="password"
-											name="password"
-											onChange={handleInputChange}
-											required
-											className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all"
-										/>
+										<Input type="password" name="password" onChange={onFieldChange} required aria-required="true" className="bg-white/50 dark:bg-slate-800/60 focus:bg-white/70 dark:focus:bg-slate-800/80 border-slate-200/60 dark:border-slate-700/60 focus:ring-2 focus:ring-indigo-500/50 dark:focus:ring-indigo-400/40 shadow-sm focus:shadow-indigo-100 transition-all" />
 									</div>
 								</div>
 
-								<Button
-									type="submit"
-									className="w-full bg-gradient-to-r from-indigo-600 to-teal-500 text-white hover:from-indigo-700 hover:to-teal-600 transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-indigo-200/40"
-									disabled={isSubmitting || registrationSuccess}>
-									{registrationSuccess
-										? "Account Created! 🎉"
-										: isSubmitting
-										? "Registering..."
-										: "Sign Up"}
+								<Button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-teal-500 text-white hover:from-indigo-700 hover:to-teal-600 transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-indigo-200/40" disabled={submitting || success} aria-busy={submitting} aria-live="polite">
+									{success ? "Account Created! 🎉" : submitting ? "Registering..." : "Sign Up"}
 								</Button>
 							</form>
 

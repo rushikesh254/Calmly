@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Signup role gateway (animations + client routing)
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -7,61 +7,20 @@ import { motion } from "framer-motion";
 import { Heart, Users, UserCheck, ArrowRight } from "lucide-react";
 
 export default function SignUpPage() {
-	const staggeredContainer = {
-		hidden: { opacity: 0 },
-		visible: {
-			opacity: 1,
-			transition: {
-				staggerChildren: 0.2,
-				delayChildren: 0.1,
-			},
-		},
-	};
-
-	const fadeInUp = {
-		hidden: { opacity: 0, y: 20 },
-		visible: {
-			opacity: 1,
-			y: 0,
-			transition: {
-				duration: 0.6,
-				ease: "easeOut",
-			},
-		},
-	};
-
-	const cardVariants = {
-		hidden: { opacity: 0, y: 30 },
-		visible: {
-			opacity: 1,
-			y: 0,
-			transition: {
-				duration: 0.6,
-				ease: "easeOut",
-			},
-		},
-		hover: {
-			y: -8,
-			transition: {
-				duration: 0.3,
-				ease: "easeOut",
-			},
-		},
-	};
+	// Animation variants (renamed for readability; identical behavior)
+	const container = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.1 } } };
+	const fade = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } };
+	const roleCard = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }, hover: { y: -8, transition: { duration: 0.3, ease: "easeOut" } } };
 
 	return (
 		<div className="min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 overflow-x-hidden">
-			<div className="absolute inset-0 overflow-hidden">
-				<div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-teal-400/20 rounded-full blur-3xl"></div>
-				<div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
+			<div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+				<div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-teal-400/20 rounded-full blur-3xl" />
+				<div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-400/20 to-pink-400/20 rounded-full blur-3xl" />
 			</div>
 
 
-			<motion.header
-				initial={{ opacity: 0, y: -20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.5 }}
-				className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-700/60">
+			<motion.header initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-700/60">
 				<nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex justify-between items-center h-20">
 						<motion.div
@@ -82,26 +41,15 @@ export default function SignUpPage() {
 			</motion.header>
 
 
-			<motion.main
-				variants={staggeredContainer}
-				initial="hidden"
-				animate="visible"
-				className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+			<motion.main variants={container} initial="hidden" animate="visible" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 				<div className="flex items-center justify-center min-h-[calc(100vh-160px)] supports-[height:100dvh]:min-h-[calc(100dvh-160px)]">
-					<motion.div variants={fadeInUp} className="w-full max-w-2xl">
+					<motion.div variants={fade} className="w-full max-w-2xl">
 						<Card className="p-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-0 shadow-2xl card-hover">
-							<motion.div variants={fadeInUp} className="space-y-8 text-center">
-								<motion.div
-									initial={{ scale: 0 }}
-									animate={{ scale: 1 }}
-									transition={{ duration: 0.5, delay: 0.3 }}
-									className="w-20 h-20 bg-gradient-to-r from-indigo-600 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+							<motion.div variants={fade} className="space-y-8 text-center">
+								<motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5, delay: 0.3 }} className="w-20 h-20 bg-gradient-to-r from-indigo-600 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
 									<Users className="w-10 h-10 text-white" />
 								</motion.div>
-								<motion.div
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{ duration: 0.6, delay: 0.4 }}>
+				<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}>
 									<h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent mb-4">
 										Join Our Community
 									</h2>
@@ -110,19 +58,11 @@ export default function SignUpPage() {
 									</p>
 								</motion.div>
 
-								<motion.div
-									variants={staggeredContainer}
-									className="grid grid-cols-1 md:grid-cols-2 gap-8">
-									<motion.div
-										variants={cardVariants}
-										whileHover="hover"
-										className="group">
+				<motion.div variants={container} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+				  <motion.div variants={roleCard} whileHover="hover" className="group">
 										<Card className="p-8 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border border-indigo-200/60 dark:border-indigo-700/60 shadow-xl card-hover h-full">
 											<div className="space-y-6">
-												<motion.div
-													whileHover={{ scale: 1.1, rotate: 5 }}
-													transition={{ duration: 0.3 }}
-													className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center mx-auto">
+												<motion.div whileHover={{ scale: 1.1, rotate: 5 }} transition={{ duration: 0.3 }} className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center mx-auto">
 													<Users className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
 												</motion.div>
 												<div>
@@ -134,9 +74,7 @@ export default function SignUpPage() {
 														improve your well-being
 													</p>
 												</div>
-												<motion.div
-													whileHover={{ scale: 1.05 }}
-													whileTap={{ scale: 0.95 }}>
+						  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 													<Button
 														asChild
 														className="w-full bg-gradient-to-r from-indigo-600 to-blue-500 text-white hover:from-indigo-700 hover:to-blue-600 shadow-lg btn-hover-lift h-12 text-base font-semibold">
@@ -152,16 +90,10 @@ export default function SignUpPage() {
 										</Card>
 									</motion.div>
 
-									<motion.div
-										variants={cardVariants}
-										whileHover="hover"
-										className="group">
+				  <motion.div variants={roleCard} whileHover="hover" className="group">
 										<Card className="p-8 bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-200/60 dark:border-teal-700/60 shadow-xl card-hover h-full">
 											<div className="space-y-6">
-												<motion.div
-													whileHover={{ scale: 1.1, rotate: -5 }}
-													transition={{ duration: 0.3 }}
-													className="w-16 h-16 bg-teal-100 dark:bg-teal-900/50 rounded-full flex items-center justify-center mx-auto">
+												<motion.div whileHover={{ scale: 1.1, rotate: -5 }} transition={{ duration: 0.3 }} className="w-16 h-16 bg-teal-100 dark:bg-teal-900/50 rounded-full flex items-center justify-center mx-auto">
 													<UserCheck className="w-8 h-8 text-teal-600 dark:text-teal-400" />
 												</motion.div>
 												<div>
@@ -173,9 +105,7 @@ export default function SignUpPage() {
 														guidance to others
 													</p>
 												</div>
-												<motion.div
-													whileHover={{ scale: 1.05 }}
-													whileTap={{ scale: 0.95 }}>
+						  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 													<Button
 														asChild
 														className="w-full bg-gradient-to-r from-teal-600 to-emerald-500 text-white hover:from-teal-700 hover:to-emerald-600 shadow-lg btn-hover-lift h-12 text-base font-semibold">
@@ -192,7 +122,7 @@ export default function SignUpPage() {
 									</motion.div>
 								</motion.div>
 
-								<motion.div variants={fadeInUp} className="relative">
+				<motion.div variants={fade} className="relative">
 									<div className="absolute inset-0 flex items-center">
 										<span className="w-full border-t border-slate-200 dark:border-slate-700" />
 									</div>
@@ -203,18 +133,18 @@ export default function SignUpPage() {
 									</div>
 								</motion.div>
 
-								<motion.div variants={fadeInUp} className="text-center">
+				<motion.div variants={fade} className="text-center">
 									<Link
 										href="/signin"
 										className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors duration-200 text-lg">
 										Sign in to your account
 									</Link>
 								</motion.div>
-							</motion.div>
-						</Card>
-					</motion.div>
-				</div>
-			</motion.main>
-		</div>
-	);
-}
+								</motion.div>
+							</Card>
+						</motion.div>
+					</div>
+				</motion.main>
+			</div>
+		);
+	}
