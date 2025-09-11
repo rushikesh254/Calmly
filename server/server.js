@@ -22,6 +22,7 @@ import sessionRoutes from "./routes/sessionRoutes.js";
 import resourcesRoutes from "./routes/resourcesRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import signUploadRoutes from "./routes/sign-upload.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 // Missing routes wired for frontend usage
 import professionalRoutes from "./routes/professionalRoutes.js";
 import adminManagementRoutes from "./routes/adminManagementRoutes.js";
@@ -111,6 +112,7 @@ app.use("/api/mood", moodLogRoutes); // alias for frontend singular
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/resources", resourcesRoutes);
 app.use("/api", journalRoutes); // prefixed with /journal inside
+app.use("/api", dashboardRoutes); // dashboard summaries /dashboard/attendee/*
 // Cloudinary signed upload endpoint
 app.use("/api/sign-upload", signUploadRoutes);
 
