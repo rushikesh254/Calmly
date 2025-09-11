@@ -1,7 +1,6 @@
 // Centralized error handler. Always returns a JSON response.
 // Logs stack traces except during tests.
 export const errorHandler = (err, req, res, next) => {
-  // eslint-disable-line no-unused-vars
   const status = res.statusCode === 200 ? 500 : res.statusCode;
   if (process.env.NODE_ENV !== "test") {
     console.error(
