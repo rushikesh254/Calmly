@@ -1,0 +1,182 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Calmly: Dev (client + server)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "cd client; npm run dev;"
+      ],
+      "isBackground": true,
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "build"
+    },
+    {
+      "label": "Calmly: Server",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "cd server; npm run dev;"
+      ],
+      "isBackground": true,
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "build"
+    },
+
+    {
+      "label": "Ping /health",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "try { $r = Invoke-RestMethod -Uri http://localhost:5000/health -TimeoutSec 5; Write-Host 'HEALTH:' ($r | ConvertTo-Json -Compress) } catch { Write-Host 'HEALTH ERROR:' $_.Exception.Message; exit 1 }"
+      ],
+      "isBackground": false,
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "Ping /api/health",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "try { $r = Invoke-RestMethod -Uri http://localhost:5000/api/health -TimeoutSec 5; Write-Host 'HEALTH:' ($r | ConvertTo-Json -Compress) } catch { Write-Host 'HEALTH ERROR:' $_.Exception.Message; exit 1 }"
+      ],
+      "isBackground": false,
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "API: Signup attendee",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "$body = @{ username = 'demoUser'; email = 'demo.user@example.com'; password = 'Password123!' } | ConvertTo-Json; try { $r = Invoke-RestMethod -Uri http://localhost:5000/api/auth/signup/attendee -Method Post -ContentType 'application/json' -Body $body -TimeoutSec 10; Write-Host 'SIGNUP:' ($r | ConvertTo-Json -Compress) } catch { Write-Host 'SIGNUP ERROR:' $_.Exception.Message; if ($_.Exception.Response -ne $null) { $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream()); $reader.BaseStream.Position = 0; $reader.DiscardBufferedData(); $respBody = $reader.ReadToEnd(); Write-Host 'DETAILS:' $respBody }; exit 1 }"
+      ],
+      "isBackground": false,
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "API: Signup attendee (JSON)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "try { $json = '{\"username\":\"demoUser\",\"email\":\"demo.user@example.com\",\"password\":\"Password123!\"}'; $r = Invoke-RestMethod -Uri http://localhost:5000/api/auth/signup/attendee -Method Post -ContentType 'application/json' -Body $json -TimeoutSec 10; Write-Host 'SIGNUP:' ($r | ConvertTo-Json -Compress) } catch { Write-Host 'SIGNUP ERROR:' $_.Exception.Message; if ($_.Exception.Response -ne $null) { $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream()); $reader.BaseStream.Position = 0; $reader.DiscardBufferedData(); $respBody = $reader.ReadToEnd(); Write-Host 'DETAILS:' $respBody }; exit 1 }"
+      ],
+      "isBackground": false,
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "API: Signin attendee",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "try { $json = '{\"email\":\"demo.user@example.com\",\"password\":\"Password123!\"}'; $r = Invoke-RestMethod -Uri http://localhost:5000/api/attendees/signin -Method Post -ContentType 'application/json' -Body $json -TimeoutSec 10; Write-Host 'SIGNIN:' ($r | ConvertTo-Json -Compress) } catch { Write-Host 'SIGNIN ERROR:' $_.Exception.Message; if ($_.Exception.Response -ne $null) { $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream()); $reader.BaseStream.Position = 0; $reader.DiscardBufferedData(); $respBody = $reader.ReadToEnd(); Write-Host 'DETAILS:' $respBody }; exit 1 }"
+      ],
+      "isBackground": false,
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "API: Signup attendee (safe quotes)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "try { $json = \"{\\\"username\\\":\\\"demoUser\\\",\\\"email\\\":\\\"demo.user@example.com\\\",\\\"password\\\":\\\"Password123!\\\"}\"; $r = Invoke-RestMethod -Uri http://localhost:5000/api/auth/signup/attendee -Method Post -ContentType application/json -Body $json -TimeoutSec 10; Write-Host \"SIGNUP:\" ($r | ConvertTo-Json -Compress) } catch { Write-Host \"SIGNUP ERROR:\" $_.Exception.Message; if ($_.Exception.Response -ne $null) { $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream()); $reader.BaseStream.Position = 0; $reader.DiscardBufferedData(); $respBody = $reader.ReadToEnd(); Write-Host \"DETAILS:\" $respBody }; exit 1 }"
+      ],
+      "isBackground": false,
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "Ping /api/admin/login (general)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "$body = @{ email = 'admin@gmail.com'; password = 'admin' } | ConvertTo-Json; try { $r = Invoke-RestMethod -Uri http://localhost:5000/api/admin/login -Method Post -ContentType 'application/json' -Body $body -TimeoutSec 10; Write-Host 'LOGIN:' ($r | ConvertTo-Json -Compress) } catch { Write-Host 'LOGIN ERROR:' $_.Exception.Message; if ($_.Exception.Response -ne $null) { $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream()); $reader.BaseStream.Position = 0; $reader.DiscardBufferedData(); $respBody = $reader.ReadToEnd(); Write-Host 'DETAILS:' $respBody }; exit 1 }"
+      ],
+      "isBackground": false,
+      "group": "build"
+    },
+    {
+      "label": "Ping /api/admin/login (general) - safe quotes",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "$body = @{ email = 'admin@gmail.com'; password = 'admin' } | ConvertTo-Json; try { $r = Invoke-RestMethod -Uri http://localhost:5000/api/admin/login -Method Post -ContentType application/json -Body $body -TimeoutSec 10; Write-Host 'LOGIN:' ($r | ConvertTo-Json -Compress) } catch { Write-Host 'LOGIN ERROR:' $_.Exception.Message; if ($_.Exception.Response -ne $null) { $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream()); $reader.BaseStream.Position = 0; $reader.DiscardBufferedData(); $respBody = $reader.ReadToEnd(); Write-Host 'DETAILS:' $respBody }; exit 1 }"
+      ],
+      "isBackground": false,
+      "group": "build"
+    },
+    {
+      "label": "Start Server (Calmly)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "cd server; npm run dev;"
+      ],
+      "isBackground": true,
+      "group": "build"
+    },
+    {
+      "label": "API: Admin login (local 5000)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "try { $json = '{\"email\":\"admin@gmail.com\",\"password\":\"admin\"}'; $r = Invoke-RestMethod -Uri http://localhost:5000/api/admin/login -Method Post -ContentType application/json -Body $json -TimeoutSec 10; Write-Host 'LOGIN:' ($r | ConvertTo-Json -Compress) } catch { Write-Host 'LOGIN ERROR:' $_.Exception.Message; if ($_.Exception.Response -ne $null) { $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream()); $reader.BaseStream.Position = 0; $reader.DiscardBufferedData(); $respBody = $reader.ReadToEnd(); Write-Host 'DETAILS:' $respBody }; exit 1 }"
+      ],
+      "isBackground": false,
+      "group": "build"
+    }
+  ]
+}

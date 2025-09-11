@@ -1,54 +1,55 @@
 {
-	"name": "calmly",
-	"version": "1.0.0",
-	"description": "Calmly - A comprehensive mental health platform",
-	"author": "Rushikesh Bodke",
-	"license": "MIT",
-	"private": true,
-	"workspaces": [
-		"client",
-		"server"
-	],
-	"scripts": {
-		"dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
-		"dev:client": "cd client && npm run dev",
-		"dev:server": "cd server && npm run dev",
-		"build": "npm run build:client && npm run build:server",
-		"build:client": "cd client && npm run build",
-		"build:server": "cd server && npm run build",
-		"start": "concurrently \"npm run start:client\" \"npm run start:server\"",
-		"start:client": "cd client && npm run start",
-		"start:server": "cd server && npm run start",
-		"install:all": "npm install && cd client && npm install && cd ../server && npm install",
-		"lint": "npm run lint:client && npm run lint:server",
-		"lint:client": "cd client && npm run lint",
-		"lint:server": "cd server && npm run lint"
-	},
-	"devDependencies": {
-		"concurrently": "^8.2.2"
-	},
-	"overrides": {
-		"eslint": "8.57.0",
-		"@typescript-eslint/eslint-plugin": "7.18.0",
-		"@typescript-eslint/parser": "7.18.0",
-		"@typescript-eslint/utils": "7.18.0",
-		"@typescript-eslint/type-utils": "7.18.0"
-	},
-	"keywords": [
-		"mental-health",
-		"therapy",
-		"wellness",
-		"nextjs",
-		"express",
-		"mongodb",
-		"javascript"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/yourusername/calmly.git"
-	},
-	"bugs": {
-		"url": "https://github.com/yourusername/calmly/issues"
-	},
-	"homepage": "https://github.com/yourusername/calmly#readme"
+  "name": "calmly",
+  "version": "1.0.0",
+  "description": "Calmly - A comprehensive mental health platform",
+  "author": "Rushikesh Bodke",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "start": "concurrently \"npm run start:client\" \"npm run start:server\"",
+    "start:client": "cd client && npm run start",
+    "start:server": "cd server && npm run start",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "lint": "npm run lint:client && npm run lint:server",
+    "lint:client": "cd client && npm run lint",
+    "lint:server": "cd server && npm run lint",
+    "check": "npm run lint && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "overrides": {
+    "eslint": "8.57.0",
+    "@typescript-eslint/eslint-plugin": "7.18.0",
+    "@typescript-eslint/parser": "7.18.0",
+    "@typescript-eslint/utils": "7.18.0",
+    "@typescript-eslint/type-utils": "7.18.0"
+  },
+  "keywords": [
+    "mental-health",
+    "therapy",
+    "wellness",
+    "nextjs",
+    "express",
+    "mongodb",
+    "javascript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/calmly.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/calmly/issues"
+  },
+  "homepage": "https://github.com/yourusername/calmly#readme"
 }
