@@ -9,6 +9,7 @@ import {
 import {
   authenticateToken,
   requireAttendee,
+  requireAdmin,
 } from "../middleware/authMiddleware.js";
 import { validate } from "../middleware/validate.js";
 import {
@@ -23,7 +24,7 @@ router.post("/signup/attendee", validate(signupAttendeeSchema), signupAttendee);
 router.post("/signin", validate(loginSchema), signinAttendee);
 
 // Listing and profile access
-router.get("/all", getAllAttendeeProfile);
+router.get("/all", authenticateToken, requireAdmin, getAllAttendeeProfile);
 router.get("/:userName", getAttendeeProfile); // public fetch by username
 
 // Protected profile update (self)
