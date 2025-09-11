@@ -1,40 +1,45 @@
 {
-	"name": "calmly-client",
-	"version": "1.0.0",
-	"private": true,
-	"description": "Calmly - Mental Health Platform Frontend",
-	"author": "Rushikesh Bodke",
-	"scripts": {
-		"dev": "set NEXT_DISABLE_TURBOPACK=1&& next dev",
-		"build": "next build",
-		"start": "next start",
-		"lint": "eslint . --max-warnings=0"
-	},
-	"dependencies": {
-		"@radix-ui/react-icons": "^1.3.2",
-		"@radix-ui/react-label": "^2.1.1",
-		"@tailwindcss/typography": "^0.5.16",
-		"@zegocloud/zego-uikit-prebuilt": "^2.14.1-beta",
-		"calmly": "file:..",
-		"class-variance-authority": "^0.7.1",
-		"clsx": "^2.1.1",
-		"framer-motion": "^12.23.12",
-		"jwt-decode": "^4.0.0",
-		"lucide-react": "^0.474.0",
-		"next": "^15.2.1",
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
-		"recharts": "^2.12.7",
-		"tailwind-merge": "^2.6.0"
-	},
-	"devDependencies": {
-		"autoprefixer": "^10.4.20",
-		"eslint": "8.57.0",
-		"eslint-config-next": "15.2.1",
-		"postcss": "^8.5.1",
-		"tailwindcss": "^3.4.17"
-	},
-	"overrides": {
-		"eslint": "8.57.0"
-	}
+  "name": "calmly-client",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Calmly - Mental Health Platform Frontend",
+  "author": "Rushikesh Bodke",
+  "scripts": {
+    "dev": "cross-env NEXT_DISABLE_TURBOPACK=1 next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "lint:strict": "eslint . --max-warnings=0"
+  },
+  "dependencies": {
+    "@radix-ui/react-icons": "^1.3.2",
+    "@radix-ui/react-label": "^2.1.1",
+    "@tailwindcss/typography": "^0.5.16",
+    "@zegocloud/zego-uikit-prebuilt": "^2.14.1-beta",
+    "calmly": "file:..",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.23.12",
+    "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.474.0",
+    "next": "^15.2.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^2.12.7",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "@rushstack/eslint-patch": "1.10.3",
+    "autoprefixer": "^10.4.20",
+    "eslint": "8.57.0",
+    "eslint-config-next": "15.2.1",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17"
+  },
+  "overrides": {
+    "eslint": "8.57.0"
+  }
 }
