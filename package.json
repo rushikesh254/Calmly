@@ -51,5 +51,8 @@
   "bugs": {
     "url": "https://github.com/yourusername/calmly/issues"
   },
-  "homepage": "https://github.com/yourusername/calmly#readme"
+  "homepage": "https://github.com/yourusername/calmly#readme",
+  "dependencies": {
+    "mongodb": "^6.19.0"
+  }
 }

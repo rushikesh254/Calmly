@@ -17,7 +17,9 @@
     "dev": "nodemon server.js",
     "build": "echo 'Nothing to build for server'",
     "seed:admin": "node seedAdmins.js",
-    "lint": "eslint . --max-warnings=0"
+    "lint": "eslint . --max-warnings=0",
+    "db:verify": "node scripts/verifyAtlas.js",
+    "db:diagnose": "node scripts/diagnoseMongo.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.22.0",
