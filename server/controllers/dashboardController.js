@@ -2,12 +2,18 @@ import Session from "../models/Session.js";
 import MoodLog from "../models/MoodLog.js";
 import JournalEntry from "../models/JournalEntry.js";
 import Resource from "../models/Resource.js";
+import Attendee from "../models/Attendee.js";
 
 // NOTE: For demo purposes we pass attendeeEmail in query (should use auth in production)
 export const attendeeSummary = async (req, res, next) => {
   try {
     const { email } = req.query;
     if (!email) return res.status(400).json({ error: "email query required" });
+
+    // Find attendee by email
+    const attendee = await Attendee.findOne({ email: email.toLowerCase() });
+    if (!attendee) return res.status(404).json({ error: "Attendee not found" });
+
     const now = new Date();
 
     const [upcomingCount, moodCount, journalCount, resourceCount] =
@@ -16,8 +22,8 @@ export const attendeeSummary = async (req, res, next) => {
           attendee_email: email.toLowerCase(),
           session_date: { $gte: now },
         }),
-        MoodLog.countDocuments({}), // TODO: filter by userId when auth known
-        JournalEntry.countDocuments({}), // TODO: filter by attendeeId
+        MoodLog.countDocuments({ userId: attendee._id }),
+        JournalEntry.countDocuments({ attendeeId: attendee._id }),
         Resource.countDocuments({}),
       ]);
 
