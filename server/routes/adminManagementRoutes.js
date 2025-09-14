@@ -16,16 +16,15 @@ const router = express.Router();
 router.get("/users", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const [attendees, mhps, admins] = await Promise.all([
-      Attendee.find({}, "username email").lean(),
-      MHP.find({}, "username email status").lean(),
-      Admin.find({}, "name email role").lean(),
+      Attendee.find({}, "-password").lean(),
+      MHP.find({}, "-password").lean(),
+      Admin.find({}, "-password").lean(),
     ]);
     const users = [
       ...attendees.map((a) => ({
-        _id: a._id,
+        ...a,
         role: "attendee",
         name: a.username,
-        email: a.email,
         status: "n/a",
       })),
       ...mhps.map((m) => ({
