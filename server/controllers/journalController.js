@@ -1,3 +1,5 @@
+// Basic journal features: list, create, update, delete entries.
+// We keep it straightforward and only allow the owner to modify their entries.
 import JournalEntry from "../models/JournalEntry.js";
 
 // List entries for the authenticated attendee
