@@ -1,3 +1,5 @@
+// Simple controller for handling availability slots.
+// Note: just comments added to make it easier to read for a college project.
 import Availability from "../models/Availability.js";
 import MHP from "../models/MHP.js";
 

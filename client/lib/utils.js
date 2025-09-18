@@ -1,7 +1,8 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-// Merge Tailwind classes with conditional logic, letting later utilities override earlier ones.
+// Small helper to combine class names.
+// I kept it simple: it just merges Tailwind classes and handles conditions.
 export function cn(...inputs) {
-  return twMerge(clsx(inputs));
+	return twMerge(clsx(inputs));
 }
