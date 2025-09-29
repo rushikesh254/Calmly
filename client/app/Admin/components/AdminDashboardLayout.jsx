@@ -189,7 +189,9 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 	);
 
 	const handleLogout = useCallback(() => {
-		try { localStorage.removeItem("accessToken"); } catch {}
+		try {
+			localStorage.removeItem("accessToken");
+		} catch {}
 		router.push("/admin");
 	}, [router]);
 
@@ -226,21 +228,33 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 	const navItems = NAV_ITEMS[role] || [];
 
 	return (
-		<div className="flex min-h-dvh bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 overflow-x-hidden">
-			<a href="#admin-main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 z-50 bg-indigo-600 text-white px-4 py-2 rounded">Skip to main content</a>
+		<div className="relative flex min-h-dvh overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+			<div
+				className="pointer-events-none absolute inset-0 opacity-50 dark:opacity-40"
+				aria-hidden="true">
+				<div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.18),transparent_55%)]" />
+				<div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(20,184,166,0.12),transparent_60%)]" />
+			</div>
+			<a
+				href="#admin-main"
+				className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 z-50 rounded bg-indigo-600 px-4 py-2 text-white">
+				Skip to main content
+			</a>
 			{/* Sidebar */}
-			<aside className="w-64 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-r border-slate-200/60 dark:border-slate-700/60 p-6 sticky top-0 h-dvh shadow-xl overflow-y-auto no-scrollbar" aria-label="Admin sidebar navigation">
-				<div className="mb-8 p-4 bg-indigo-50/50 rounded-xl">
+			<aside
+				className="relative z-10 h-dvh w-64 overflow-y-auto border-r border-slate-200/60 bg-white/80 p-6 shadow-xl backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-950/75 no-scrollbar"
+				aria-label="Admin sidebar navigation">
+				<div className="mb-8 rounded-xl bg-indigo-100/60 p-4 dark:bg-white/5">
 					<div className="flex items-center justify-between gap-3">
 						<div>
-							<h2 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent break-words">
+							<h2 className="break-words text-lg font-bold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent">
 								{userName}
 							</h2>
-							<p className="text-sm text-slate-600 capitalize mt-1 font-medium">
+							<p className="mt-1 text-sm font-medium capitalize text-slate-600 dark:text-slate-300">
 								{role.replace("-", " ")} Dashboard
 							</p>
 						</div>
-						<ThemeToggle />
+						{/* <ThemeToggle /> */}
 					</div>
 				</div>
 				<nav role="navigation">
@@ -251,27 +265,32 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 							return (
 								<li key={item.section}>
 									<button
-										onClick={(e) => (isLogout ? handleLogout() : handleSectionChange(e, item.section))}
-										className={`w-full flex items-center p-3 text-sm font-medium rounded-xl transition-all duration-200 ${
+										onClick={(e) =>
+											isLogout
+												? handleLogout()
+												: handleSectionChange(e, item.section)
+										}
+										className={`flex w-full items-center rounded-xl p-3 text-sm font-medium transition-all duration-200 ${
 											isActive
 												? "bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg"
-												: "text-slate-600 hover:bg-indigo-50/50 hover:translate-x-2"
+												: "text-slate-600 hover:translate-x-2 hover:bg-indigo-100/70 dark:text-slate-200 dark:hover:bg-white/10"
 										}`}
 										aria-current={isActive ? "page" : undefined}
-										aria-label={item.name + (isActive ? " (current section)" : "")}
-									>
-										<span className={`mr-3 ${isActive ? "text-white" : "text-indigo-400"}`}>
+										aria-label={
+											item.name + (isActive ? " (current section)" : "")
+										}>
+										<span
+											className={`mr-3 ${isActive ? "text-white" : "text-indigo-400 dark:text-indigo-300"}`}>
 											{item.icon}
 										</span>
-										<span className="text-left flex-1">{item.name}</span>
+										<span className="flex-1 text-left">{item.name}</span>
 										{isLogout && (
-											<span className="ml-auto text-red-200 hover:text-red-100">
+											<span className="ml-auto text-red-300 hover:text-red-200 dark:text-red-200 dark:hover:text-red-100">
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
 													className="h-4 w-4"
 													viewBox="0 0 20 20"
-													fill="currentColor"
-												>
+													fill="currentColor">
 													<path
 														fillRule="evenodd"
 														d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
@@ -289,9 +308,9 @@ export const AdminDashboardLayout = ({ role, userName, email, children }) => {
 			</aside>
 
 			{/* Main Content */}
-			<main className="flex-1 p-8">
-				<div className="max-w-7xl mx-auto bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-6 sm:p-8 shadow-lg">
-					<div className="flex items-center justify-end mb-4">
+			<main id="admin-main" className="relative z-10 flex-1 p-6 sm:p-8">
+				<div className="mx-auto max-w-7xl rounded-2xl border border-slate-200/60 bg-white/85 p-6 shadow-lg backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-950/75 sm:p-8">
+					<div className="mb-4 flex items-center justify-end">
 						<ThemeToggle />
 					</div>
 					{mainContent}

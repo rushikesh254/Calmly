@@ -148,7 +148,7 @@ export const Resources = ({ userName, email }) => {
 					<label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
 					<input
 						type="text"
-						className="w-full px-2.5 py-1.5 rounded-xl border-2 border-indigo-100 bg-indigo-50 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 transition-all outline-none"
+						className="w-full px-2.5 py-1.5 text-black rounded-xl border-2 border-indigo-100 bg-indigo-50 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 transition-all outline-none"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
 						required
@@ -173,7 +173,7 @@ export const Resources = ({ userName, email }) => {
 							<label className="block text-sm font-medium text-gray-700 mb-2">Headline</label>
 							<input
 								type="text"
-								className="w-full px-4 py-3 rounded-xl border-2 border-indigo-100 bg-indigo-50 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 transition-all outline-none"
+								className="w-full px-4 py-3 text-black rounded-xl border-2 border-indigo-100 bg-indigo-50 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 transition-all outline-none"
 								value={headline}
 								onChange={(e) => setHeadline(e.target.value)}
 								required
@@ -182,7 +182,7 @@ export const Resources = ({ userName, email }) => {
 						<div>
 							<label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
 							<textarea
-								className="w-full px-4 py-3 rounded-xl border-2 border-indigo-100 bg-indigo-50 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 transition-all outline-none min-h-[150px]"
+								className="w-full px-4 py-3 text-black rounded-xl border-2 border-indigo-100 bg-indigo-50 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 transition-all outline-none min-h-[150px]"
 								value={content}
 								onChange={(e) => setContent(e.target.value)}
 								required

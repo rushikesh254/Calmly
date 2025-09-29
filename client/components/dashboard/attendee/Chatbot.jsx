@@ -1,3 +1,1 @@
-export default function Chatbot() {
-	return null; // Placeholder
-}
+export { default } from "./AIAssistant";

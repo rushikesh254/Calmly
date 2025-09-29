@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AdminLoginForm } from "./components/AdminLoginForm";
+import { fetchFromApi, getDefaultApiBase } from "@/lib/api";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL; // Expected to be defined in env.
+const DEFAULT_API_BASE = getDefaultApiBase() || "http://localhost:5000";
 
 const AdminLoginPage = () => {
 	// Form state
@@ -43,7 +44,7 @@ const AdminLoginPage = () => {
 		}
 
 		try {
-			const response = await fetch(`${API_BASE}/api/admin/login`, {
+			const response = await fetchFromApi("/api/admin/login", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ email, password }),
@@ -57,8 +58,12 @@ const AdminLoginPage = () => {
 			}
 
 			if (response.ok) {
-				if (data?.accessToken) localStorage.setItem("accessToken", data.accessToken);
+				if (data?.accessToken)
+					localStorage.setItem("accessToken", data.accessToken);
 				if (data?.userName) localStorage.setItem("userName", data.userName);
+				if (data?.email || email)
+					localStorage.setItem("email", data?.email || email);
+				if (data?.role) localStorage.setItem("role", data.role);
 
 				if (!goToRoleDashboard(data?.role, data?.userName)) {
 					setError("Role not recognized");
@@ -66,8 +71,14 @@ const AdminLoginPage = () => {
 			} else {
 				setError(data?.message || "Authentication failed");
 			}
-		} catch {
-			setError("Failed to connect to server");
+		} catch (err) {
+			if (!process.env.NEXT_PUBLIC_API_URL) {
+				setError(
+					`Failed to connect to server. Ensure the API is running at ${DEFAULT_API_BASE} or set NEXT_PUBLIC_API_URL.`
+				);
+			} else {
+				setError("Failed to connect to server");
+			}
 		}
 	};
 
